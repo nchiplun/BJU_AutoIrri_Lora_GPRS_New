@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <executable name="dist/18f67k40/debug\BJU_AutoIrri_Lora_GPRS_DevBranch_New.X.debug.hex">
+    <memory name="program">
+      <units>bytes</units>
+      <length>131072</length>
+      <used>72184</used>
+      <free>58888</free>
+    </memory>
+    <memory name="data">
+      <units>bytes</units>
+      <length>3562</length>
+      <used>2001</used>
+      <free>1561</free>
+    </memory>
+  </executable>
+</project>

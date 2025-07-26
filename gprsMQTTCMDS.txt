@@ -1,0 +1,51 @@
+
+
+AT
+
+AT+CNMP=38
+
+//Start MQTT service
+AT+CMQTTSTART
+
+//Acquire client
+
+
+//Configure client
+AT+CMQTTCFG=0,30
+
+//Connect to broker
+AT+CMQTTCONNECT=0,"tcp://mqtt.bhoomijalasandharan.com:1883",60,1,"bjuAdmin","Fus!2Fus!3"
+AT+CMQTTCONNECT=0,"TCP://MQTT.BHOOMIJALASANDHARAN.COM:1883",60,1
+
+//subscribe operations:
+//Set topic , WHY THERE IS NO Subscribe Topic Setup CMD --> AT+CMQTTSUBTOPIC=<client_idx>,<length>,<qos>
+
+//AT+CMQTTSUBTOPIC=0,20,1
+
+AT+CMQTTSUB=0,20,1
+
+//Subscribe
+4269c02cc071/command
+4269C02CC071/COMMAND
+
+//Wait for incoming messages
+
+//publish operations:
+//Set topic  
+AT+CMQTTTOPIC=0,21
+
+//Publish
+>4269C02CC071/RESPONSE 
+
+//Set payload
+AT+CMQTTPAYLOAD=0,13
+
+//Publish message
+"messagetosend"
+>MESSAGETOSEND
+
+
+AT+CMQTTPUB=0,1,60
+
++CMQTTCONNLOST: 0,1
+
