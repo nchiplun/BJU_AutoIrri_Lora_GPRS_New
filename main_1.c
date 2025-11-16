@@ -39,67 +39,32 @@ void __interrupt(high_priority)rxANDiocInterrupt_handler(void) {
     if (PIR4bits.RC3IF) { // Interrupt on GSM RX pin
         Run_led = GLOW; // Led Indication for system in Operational Mode
         rxCharacter = rxByte(); // Read byte received at Reception Register
+        lastChar = false;
         // Check if any overrun occur due to continuous reception
         if (RC3STAbits.OERR) {
             RC3STAbits.CREN = 0;
             Nop();
             RC3STAbits.CREN = 1;
         }
-        if (!controllerCommandExecuted) { // check if GSM response to µc command is not completed
-            if (rxCharacter == '+' && msgIndex == 0) {
-                gsmResponse[msgIndex] = rxCharacter; // Load received byte into storage buffer
-                msgIndex++; // point to next location for storing next received byte
-            } else if (msgIndex > 0 && msgIndex <=200) { // Cascade received data to stored response after receiving first character '+'
-                gsmResponse[msgIndex] = rxCharacter; // Load received byte into storage buffer
-                if (gsmResponse[msgIndex - 1] == 'O' && gsmResponse[msgIndex] == 'K') { // Cascade till 'OK'  is found
-                    isOK = true;
-                    isERROR = false;
-                    controllerCommandExecuted = true; // GSM response to µc command is completed
-                    msgIndex = CLEAR; // Reset message storage index to first character to start reading for next received byte of cmd
-                } else if (gsmResponse[msgIndex - 4] == 'E' && gsmResponse[msgIndex - 3] == 'R' && gsmResponse[msgIndex - 2] == 'R' && gsmResponse[msgIndex - 1] == 'O' && gsmResponse[msgIndex] == 'R') { // Cascade till 'OK'  is found
-                    isERROR = true;
-                    controllerCommandExecuted = true; // GSM response to µc command is completed
-                    msgIndex = CLEAR; // Reset message storage index to first character to start reading for next received byte of cmd
-                } else if (msgIndex <= 200) { // Read bytes till 200 characters
-                    msgIndex++;
-                }
-            }    
-        } else if (rxCharacter == '*') {
-            msgIndex = CLEAR; // Reset message storage index to first character to start reading from '+'
-            gsmResponse[msgIndex] = rxCharacter; // Load Received byte into storage buffer
-            msgIndex++; // point to next location for storing next received byte
-            msgStart = true;
-            atcmdStart = false;
-        } else if ( msgStart && (msgIndex > 0 && msgIndex < 200)) {
-            gsmResponse[msgIndex] = rxCharacter; // Load received byte into storage buffer
-            msgIndex++; // point to next location for storing next received byte
-            // check if storage index is reached to last character of CMTI command
-            if (rxCharacter == '#') {
-                msgIndex = CLEAR;
-                newSMSRcvd = true; // Set to indicate New topic is Received
-                msgStart = false;
-            }
-        } else if (rxCharacter == '+' && !newSMSRcvd) {
-            msgIndex = CLEAR; // Reset message storage index to first character to start reading from '+'
-            gsmResponse[msgIndex] = rxCharacter; // Load Received byte into storage buffer
-            msgIndex++;
+        if (gsmResponse[0] == '\0' && rxCharacter == '\n' ) {
+            msgIndex = CLEAR;
             atcmdStart = true;
-        } else if ( atcmdStart && (msgIndex > 0 && msgIndex < 14)) {
-            gsmResponse[msgIndex] = rxCharacter; // Load received byte into storage buffer
-            msgIndex++; // point to next location for storing next received byte
-            // check if storage index is reached to last character of CMTI command
-            if (msgIndex == 14) {
-                if (strncmp(gsmResponse+1, cmqttError, 13) == 0) {
-                    clearGsmResponse();
-                    isERROR = true;
-                    isErrorActionTaken = false;
+            gsmResponse[msgIndex++] = rxCharacter; // Load received byte into storage buffer
+        }else if (atcmdStart) {
+            gsmResponse[msgIndex++] = rxCharacter; // Load received byte into storage buffer
+            if (rxCharacter == '\n') {
+                lastChar = true;
+                lastCharPos = msgIndex;
+                if (msgIndex >= 200) {
+                    msgIndex = CLEAR;
                 }
-                atcmdStart = false;   
+                restartcmd = true;
             }
-        } else {
-            atcmdStart = false;
+            if (rxCharacter == '#') {
+                newSMSRcvd = true; // Set to indicate New topic is Received
+                restartcmd = false;
+            }
         }
-        //SIM_led = DARK;  // Led Indication for GSM interrupt is done 
         PIR4bits.RC3IF= CLEAR; // Reset the ISR flag.
     } else if (PIR3bits.RC1IF) { // Interrupt on LORA RX pin
         Run_led = GLOW; // Led Indication for system in Operational Mode
@@ -112,11 +77,9 @@ void __interrupt(high_priority)rxANDiocInterrupt_handler(void) {
         }
         if (rxCharacter == '#') {
             msgIndex = CLEAR; // Reset message storage index to first character to start reading from '+'
-            decodedString[msgIndex] = rxCharacter; // Load Received byte into storage buffer
-            msgIndex++; // point to next location for storing next received byte
+            decodedString[msgIndex++] = rxCharacter; // Load Received byte into storage buffer
         } else if (msgIndex > 0 && msgIndex < 25) {
-            decodedString[msgIndex] = rxCharacter; // Load received byte into storage buffer
-            msgIndex++; // point to next location for storing next received byte
+            decodedString[msgIndex++] = rxCharacter; // Load received byte into storage buffer
             // check if storage index is reached to last character of CMTI command
             if (rxCharacter == '$') {
                 msgIndex = CLEAR;
@@ -480,25 +443,24 @@ nxtVlv: if (!valveDue && !phaseFailureDetected && !lowPhaseCurrentDetected) {
             //********Debug log#end**************//
             #endif
             if (newSMSRcvd) {
+                if (strstr(gsmResponse, deviceId) != NULL ) {
 #ifdef LCD_DISPLAY_ON_H
-                displayIcon(sms_icon);
-                __delay_ms(500);
+                    displayIcon(sms_icon);
+                    __delay_ms(500);
 #endif
-                #ifdef DEBUG_MODE_ON_H
-                //********Debug log#start************//
-                transmitStringToDebug("newSMSRcvd_IN\r\n");
-                //********Debug log#end**************//
-                #endif
-               
-                newSMSRcvd = false; // received command is processed										
-                extractReceivedSms(); // Read received SMS
- 
-                //deleteMsgFromSIMStorage();
-                #ifdef DEBUG_MODE_ON_H
-                //********Debug log#start************//
-                transmitStringToDebug("newSMSRcvd_OUT\r\n");
-                //********Debug log#end**************//
-                #endif
+#ifdef DEBUG_MODE_ON_H
+                    //********Debug log#start************//
+                    transmitStringToDebug("newSMSRcvd_IN\r\n");
+                    //********Debug log#end**************//
+#endif   
+                    newSMSRcvd = false; // received command is processed										
+                    extractReceivedSms(); // Read received SMS
+#ifdef DEBUG_MODE_ON_H
+                    //********Debug log#start************//
+                    transmitStringToDebug("newSMSRcvd_OUT\r\n");
+                    //********Debug log#end**************//
+#endif    
+                }
             } 
             //check if Sleep count executed without external interrupt
             else {

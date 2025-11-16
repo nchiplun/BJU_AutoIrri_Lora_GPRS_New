@@ -24677,6 +24677,7 @@ unsigned char injector4CycleCnt = 0;
 unsigned char loraAliveCount = 0;
 unsigned char loraAliveCountCheck = 0;
 unsigned char loraAttempt = 0;
+unsigned char wait = 0;
 unsigned char timer3Count = 0;
 unsigned char rxCharacter = 0;
 unsigned char msgIndex = 0;
@@ -24711,6 +24712,7 @@ unsigned char filtrationOnTime = 0;
 unsigned char dryRunCheckCount = 0;
 unsigned char currentFieldNo = 0;
 unsigned char pulses = 0;
+unsigned char lastCharPos = 0;
 char fieldByte[3] = "";
 char temporaryBytesArray[26] = "";
 char deviceId[] = "a0d1d8668dd8";
@@ -24718,7 +24720,7 @@ char dueDate[15] = "";
 char pwd[7] = "";
 char factryPswrd[7] = "";
 size_t temp = 0;
-# 403 "./variableDefinitions.h"
+# 405 "./variableDefinitions.h"
 #pragma idata decodedString
 unsigned char decodedString[200] = {'\0'};
 
@@ -24761,7 +24763,7 @@ const char active[7] = "ACTIVE";
 const char dactive[8] = "DACTIVE";
 const char hold[5] = "HOLD";
 const char extract[8] = "EXTRACT";
-const char ok[3] = "ok";
+const char ok[3] = "OK";
 const char time[5] = "TIME";
 const char feed[5] = "FEED";
 const char fdata[6] = "FDATA";
@@ -24772,8 +24774,16 @@ const char setct[6] = "CTSET";
 const char secret[12] = "12345678912";
 const char getct[4] = "CTV";
 const char getfreq[5] = "FREQ";
-const char countryCode[4] = "+91";
-const char mqttConnect[19] = "+CMQTTCONNECT: 0,0";
+const char csq[6] = "CSQ: ";
+const char mqttConnect[15] = "+CMQTTCONNECT:";
+const char mqttLost[16] = "+CMQTTCONNLOST:";
+const char gsmError[6] = "+CGEV";
+const char gsmRestart[10] = "*ATREADY:";
+const char cclk[7] = "+CCLK:";
+const char mqttStart[13] = "+CMQTTSTART:";
+const char mqttSub[11] = "+CMQTTSUB:";
+const char netRestart[8] = "PB DONE";
+const char pdnRestart[8] = "PDN ACT";
 
 
 
@@ -24788,8 +24798,7 @@ const char alive[6] = "ALIVE";
 const char sensor[7] = "SENSOR";
 const char lowbattery[16] = "LOWBATTERYSLAVE";
 const char resetslave[11] = "RESETSLAVE";
-const char cmqttError[14] = "CMQTTCONNLOST";
-# 486 "./variableDefinitions.h"
+# 495 "./variableDefinitions.h"
 const char SmsAU4_63[64] = "System Authenticated with Phase failure, suspending all actions";
 
 
@@ -24816,7 +24825,7 @@ const char cmd17_11[12] = "*FREQERROR#";
 const char cmd18_12[13] = "*CTSETERROR#";
 const char cmd18_7[8] = "*MAPOK#";
 const char cmd19_10[11] = "*MAPERROR#";
-# 523 "./variableDefinitions.h"
+# 532 "./variableDefinitions.h"
 const char NotIrr4_30[] = "Valve started for field ";
 const char NotIrr5_30[] = "Valve stopped for field ";
 const char NotIrr6_54[] = "Wet field detected. Valve not started for field ";
@@ -24879,7 +24888,7 @@ const char NotDR4_72[] = "Action Suspended. Irrigation scheduled to next due dat
 
 
 const char NotMotor1_55[] = "Action completed for due fields. Motor switched off";
-# 595 "./variableDefinitions.h"
+# 604 "./variableDefinitions.h"
 const char NotPh1_50[] = "Phase failure detected, suspending all actions";
 const char NotPh2_72[] = "Low Phase current detected, actions suspended, please restart system";
 const char NotPh3_23[] = "Phase loss detected";
@@ -24936,7 +24945,7 @@ _Bool checkFertFlow = 0;
 _Bool isPulseOn = 0;
 _Bool isOK = 0;
 _Bool isERROR = 0;
-_Bool isErrorActionTaken = 0;
+_Bool isErrorActionNeeded = 0;
 _Bool isNotification = 0;
 _Bool isValveConfigured = 0;
 _Bool msgStart = 0;
@@ -24945,6 +24954,8 @@ _Bool atcmdStart = 0;
 _Bool lowBattery = 0;
 _Bool resetSlave = 0;
 _Bool deviceIDFalg = 0;
+_Bool restartcmd = 0;
+_Bool lastChar = 0;
 # 13 "ADC.c" 2
 
 # 1 "./ADC.h" 1

@@ -21,9 +21,11 @@ void checkGsmConnection(void); // To check GSM connection
 void configureGPRS(void);
 void configureMQTT(void); // To enable reception
 void deleteMsgFromSIMStorage(void); // To delete sms from sim memory
-void checkSignalStrength(void); // To check GSM signal strength
+_Bool checkSignalStrength(void); // To check GSM signal strength
 void publishResponse(const char*, _Bool); // To publish Response
 void publishNotification(const char*, const char*, _Bool);
+void checkResponse(unsigned char); // Check gsm response upon complete reception
+void checkPingResponse(void); //transmit the AT command "AT+CMQTTPING=0" via UART and monitor the response buffer
 /***************************** Serial communication functions declarations#end ******/
 
 #endif

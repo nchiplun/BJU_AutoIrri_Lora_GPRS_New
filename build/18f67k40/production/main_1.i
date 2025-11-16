@@ -24677,6 +24677,7 @@ unsigned char injector4CycleCnt = 0;
 unsigned char loraAliveCount = 0;
 unsigned char loraAliveCountCheck = 0;
 unsigned char loraAttempt = 0;
+unsigned char wait = 0;
 unsigned char timer3Count = 0;
 unsigned char rxCharacter = 0;
 unsigned char msgIndex = 0;
@@ -24711,6 +24712,7 @@ unsigned char filtrationOnTime = 0;
 unsigned char dryRunCheckCount = 0;
 unsigned char currentFieldNo = 0;
 unsigned char pulses = 0;
+unsigned char lastCharPos = 0;
 char fieldByte[3] = "";
 char temporaryBytesArray[26] = "";
 char deviceId[] = "a0d1d8668dd8";
@@ -24718,7 +24720,7 @@ char dueDate[15] = "";
 char pwd[7] = "";
 char factryPswrd[7] = "";
 size_t temp = 0;
-# 403 "./variableDefinitions.h"
+# 405 "./variableDefinitions.h"
 #pragma idata decodedString
 unsigned char decodedString[200] = {'\0'};
 
@@ -24761,7 +24763,7 @@ const char active[7] = "ACTIVE";
 const char dactive[8] = "DACTIVE";
 const char hold[5] = "HOLD";
 const char extract[8] = "EXTRACT";
-const char ok[3] = "ok";
+const char ok[3] = "OK";
 const char time[5] = "TIME";
 const char feed[5] = "FEED";
 const char fdata[6] = "FDATA";
@@ -24772,8 +24774,16 @@ const char setct[6] = "CTSET";
 const char secret[12] = "12345678912";
 const char getct[4] = "CTV";
 const char getfreq[5] = "FREQ";
-const char countryCode[4] = "+91";
-const char mqttConnect[19] = "+CMQTTCONNECT: 0,0";
+const char csq[6] = "CSQ: ";
+const char mqttConnect[15] = "+CMQTTCONNECT:";
+const char mqttLost[16] = "+CMQTTCONNLOST:";
+const char gsmError[6] = "+CGEV";
+const char gsmRestart[10] = "*ATREADY:";
+const char cclk[7] = "+CCLK:";
+const char mqttStart[13] = "+CMQTTSTART:";
+const char mqttSub[11] = "+CMQTTSUB:";
+const char netRestart[8] = "PB DONE";
+const char pdnRestart[8] = "PDN ACT";
 
 
 
@@ -24788,8 +24798,7 @@ const char alive[6] = "ALIVE";
 const char sensor[7] = "SENSOR";
 const char lowbattery[16] = "LOWBATTERYSLAVE";
 const char resetslave[11] = "RESETSLAVE";
-const char cmqttError[14] = "CMQTTCONNLOST";
-# 486 "./variableDefinitions.h"
+# 495 "./variableDefinitions.h"
 const char SmsAU4_63[64] = "System Authenticated with Phase failure, suspending all actions";
 
 
@@ -24816,7 +24825,7 @@ const char cmd17_11[12] = "*FREQERROR#";
 const char cmd18_12[13] = "*CTSETERROR#";
 const char cmd18_7[8] = "*MAPOK#";
 const char cmd19_10[11] = "*MAPERROR#";
-# 523 "./variableDefinitions.h"
+# 532 "./variableDefinitions.h"
 const char NotIrr4_30[] = "Valve started for field ";
 const char NotIrr5_30[] = "Valve stopped for field ";
 const char NotIrr6_54[] = "Wet field detected. Valve not started for field ";
@@ -24879,7 +24888,7 @@ const char NotDR4_72[] = "Action Suspended. Irrigation scheduled to next due dat
 
 
 const char NotMotor1_55[] = "Action completed for due fields. Motor switched off";
-# 595 "./variableDefinitions.h"
+# 604 "./variableDefinitions.h"
 const char NotPh1_50[] = "Phase failure detected, suspending all actions";
 const char NotPh2_72[] = "Low Phase current detected, actions suspended, please restart system";
 const char NotPh3_23[] = "Phase loss detected";
@@ -24936,7 +24945,7 @@ _Bool checkFertFlow = 0;
 _Bool isPulseOn = 0;
 _Bool isOK = 0;
 _Bool isERROR = 0;
-_Bool isErrorActionTaken = 0;
+_Bool isErrorActionNeeded = 0;
 _Bool isNotification = 0;
 _Bool isValveConfigured = 0;
 _Bool msgStart = 0;
@@ -24945,6 +24954,8 @@ _Bool atcmdStart = 0;
 _Bool lowBattery = 0;
 _Bool resetSlave = 0;
 _Bool deviceIDFalg = 0;
+_Bool restartcmd = 0;
+_Bool lastChar = 0;
 # 14 "main_1.c" 2
 
 # 1 "./controllerActions.h" 1
@@ -25040,9 +25051,11 @@ void checkGsmConnection(void);
 void configureGPRS(void);
 void configureMQTT(void);
 void deleteMsgFromSIMStorage(void);
-void checkSignalStrength(void);
+_Bool checkSignalStrength(void);
 void publishResponse(const char*, _Bool);
 void publishNotification(const char*, const char*, _Bool);
+void checkResponse(unsigned char);
+void checkPingResponse(void);
 # 17 "main_1.c" 2
 
 # 1 "./lora.h" 1
@@ -25114,67 +25127,32 @@ void __attribute__((picinterrupt(("high_priority"))))rxANDiocInterrupt_handler(v
     if (PIR4bits.RC3IF) {
         PORTHbits.RH3 = 0;
         rxCharacter = rxByte();
+        lastChar = 0;
 
         if (RC3STAbits.OERR) {
             RC3STAbits.CREN = 0;
             __nop();
             RC3STAbits.CREN = 1;
         }
-        if (!controllerCommandExecuted) {
-            if (rxCharacter == '+' && msgIndex == 0) {
-                gsmResponse[msgIndex] = rxCharacter;
-                msgIndex++;
-            } else if (msgIndex > 0 && msgIndex <=200) {
-                gsmResponse[msgIndex] = rxCharacter;
-                if (gsmResponse[msgIndex - 1] == 'O' && gsmResponse[msgIndex] == 'K') {
-                    isOK = 1;
-                    isERROR = 0;
-                    controllerCommandExecuted = 1;
-                    msgIndex = 0;
-                } else if (gsmResponse[msgIndex - 4] == 'E' && gsmResponse[msgIndex - 3] == 'R' && gsmResponse[msgIndex - 2] == 'R' && gsmResponse[msgIndex - 1] == 'O' && gsmResponse[msgIndex] == 'R') {
-                    isERROR = 1;
-                    controllerCommandExecuted = 1;
-                    msgIndex = 0;
-                } else if (msgIndex <= 200) {
-                    msgIndex++;
-                }
-            }
-        } else if (rxCharacter == '*') {
+        if (gsmResponse[0] == '\0' && rxCharacter == '\n' ) {
             msgIndex = 0;
-            gsmResponse[msgIndex] = rxCharacter;
-            msgIndex++;
-            msgStart = 1;
-            atcmdStart = 0;
-        } else if ( msgStart && (msgIndex > 0 && msgIndex < 200)) {
-            gsmResponse[msgIndex] = rxCharacter;
-            msgIndex++;
-
-            if (rxCharacter == '#') {
-                msgIndex = 0;
-                newSMSRcvd = 1;
-                msgStart = 0;
-            }
-        } else if (rxCharacter == '+' && !newSMSRcvd) {
-            msgIndex = 0;
-            gsmResponse[msgIndex] = rxCharacter;
-            msgIndex++;
             atcmdStart = 1;
-        } else if ( atcmdStart && (msgIndex > 0 && msgIndex < 14)) {
-            gsmResponse[msgIndex] = rxCharacter;
-            msgIndex++;
-
-            if (msgIndex == 14) {
-                if (strncmp((char*)(gsmResponse+1),(char*)(cmqttError),(13)) == 0) {
-                    clearGsmResponse();
-                    isERROR = 1;
-                    isErrorActionTaken = 0;
+            gsmResponse[msgIndex++] = rxCharacter;
+        }else if (atcmdStart) {
+            gsmResponse[msgIndex++] = rxCharacter;
+            if (rxCharacter == '\n') {
+                lastChar = 1;
+                lastCharPos = msgIndex;
+                if (msgIndex >= 200) {
+                    msgIndex = 0;
                 }
-                atcmdStart = 0;
+                restartcmd = 1;
             }
-        } else {
-            atcmdStart = 0;
+            if (rxCharacter == '#') {
+                newSMSRcvd = 1;
+                restartcmd = 0;
+            }
         }
-
         PIR4bits.RC3IF= 0;
     } else if (PIR3bits.RC1IF) {
         PORTHbits.RH3 = 0;
@@ -25187,11 +25165,9 @@ void __attribute__((picinterrupt(("high_priority"))))rxANDiocInterrupt_handler(v
         }
         if (rxCharacter == '#') {
             msgIndex = 0;
-            decodedString[msgIndex] = rxCharacter;
-            msgIndex++;
+            decodedString[msgIndex++] = rxCharacter;
         } else if (msgIndex > 0 && msgIndex < 25) {
-            decodedString[msgIndex] = rxCharacter;
-            msgIndex++;
+            decodedString[msgIndex++] = rxCharacter;
 
             if (rxCharacter == '$') {
                 msgIndex = 0;
@@ -25256,7 +25232,7 @@ void __attribute__((picinterrupt(("high_priority"))))rxANDiocInterrupt_handler(v
         PIR0bits.IOCIF = 0;
     }
 }
-# 193 "main_1.c"
+# 156 "main_1.c"
 void __attribute__((picinterrupt(("low_priority")))) timerInterrupt_handler(void) {
 
     if (PIR0bits.TMR0IF) {
@@ -25293,7 +25269,7 @@ void __attribute__((picinterrupt(("low_priority")))) timerInterrupt_handler(void
                 sleepCount = 0;
             }
         }
-# 242 "main_1.c"
+# 205 "main_1.c"
         if (PORTHbits.RH2 == 1) {
             if (PORTEbits.RE4 == 1) {
                 if(injector1OnPeriodCnt == injector1OnPeriod) {
@@ -25502,7 +25478,7 @@ nxtVlv: if (!valveDue && !phaseFailureDetected && !lowPhaseCurrentDetected) {
 
 
             publishNotification("Irrigation Alert",NotMotor1_55,0);
-# 462 "main_1.c"
+# 425 "main_1.c"
             startFieldNo = 0;
 
         }
@@ -25515,27 +25491,26 @@ nxtVlv: if (!valveDue && !phaseFailureDetected && !lowPhaseCurrentDetected) {
             msgIndex = 0;
 
             deepSleep();
-# 482 "main_1.c"
+# 445 "main_1.c"
             if (newSMSRcvd) {
+                if (strstr(gsmResponse, deviceId) != ((void*)0) ) {
 
-                displayIcon(7);
-                _delay((unsigned long)((500)*(64000000/4000.0)));
-
-
-
-
-
-
-
-                newSMSRcvd = 0;
-                extractReceivedSms();
+                    displayIcon(7);
+                    _delay((unsigned long)((500)*(64000000/4000.0)));
 
 
 
 
 
 
+                    newSMSRcvd = 0;
+                    extractReceivedSms();
 
+
+
+
+
+                }
             }
 
             else {
@@ -25564,7 +25539,7 @@ nxtVlv: if (!valveDue && !phaseFailureDetected && !lowPhaseCurrentDetected) {
 
 
                         publishNotification("RTC Battery Alert",NotRTC1_30,0);
-# 541 "main_1.c"
+# 503 "main_1.c"
                     }
                 }
             }

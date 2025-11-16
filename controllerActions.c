@@ -64,7 +64,6 @@ The purpose of this function is to check if string has space or = or multiple of
 
  **************************************************************************************************************************/
 _Bool isBase64String(unsigned char * string) {
-    //unsigned int stringLength;
     unsigned char * s = string;
     while (*s++ != '\0') {
         if (*s == space) {
@@ -83,8 +82,9 @@ This function is called to get current local time
 The purpose of this function is to receive local time stamp from GSM module
 
  **************************************************************************************************************************/
-void getDateFromGSM(void) {   
-    unsigned char index = 0;
+void getDateFromGSM(void) {
+    _Bool correctDate = false;
+    unsigned char index = 0, p = 0;
     //timer3Count = 30; // 30 sec window
 #ifdef DEBUG_MODE_ON_H
     //********Debug log#start************//
@@ -94,25 +94,30 @@ void getDateFromGSM(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("Fetching ", 2);
     lcdWriteStringAtCenter("Server Time ", 3);
 #endif
-    msgIndex = CLEAR;
-    controllerCommandExecuted = false;
     loraAttempt = 0;
     isOK = false;
     isERROR = false;
     do {
-        transmitStringToGSM("AT+CCLK?\r\n"); // To get local time stamp  +CCLK: "18/05/26,12:00:06+22"   ok
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 5 && !isOK);
-    controllerCommandExecuted = true;
+        clearGsmResponse();
+        transmitStringToGSM("AT+CCLK?\r"); // To get local time stamp  +CCLK: "18/05/26,12:00:06+22"   ok
+        do {
+            __delay_ms(1000);
+        }while (!lastChar);
+        do {
+            __delay_ms(1000);
+        } while (lastCharPos != msgIndex);
+        checkResponse(0);
+    } while (loraAttempt++ < 5 && !isErrorActionNeeded && !isOK);
     if (isOK) {
     } else if (isERROR) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("ERROR In GPRS ", 2);
         lcdWriteStringAtCenter("Connection", 3);
 #endif
@@ -121,6 +126,7 @@ void getDateFromGSM(void) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("No Response ", 2);
         lcdWriteStringAtCenter("From GPRS", 3);
 #endif
@@ -137,21 +143,21 @@ void getDateFromGSM(void) {
     currentSeconds = CLEAR;
 ///*
     lcdSetCursor(4,1);
-    lcdWriteStringIndex(gsmResponse+8,17);
+    p = (unsigned char)((strstr(gsmResponse, cclk)) - gsmResponse);
+    lcdWriteStringIndex(gsmResponse+8+p,17);
      __delay_ms(2500);
 //*/
     // To check no garbage value received for date time command
-    for (index = 8; index < 24; index += 3) {
+    for (index = p+8; index < p+24; index += 3) {
         if (isNumber(gsmResponse[index]) && isNumber(gsmResponse[index + 1])) {
-            controllerCommandExecuted = true;
+            correctDate = true;
         } else {
-            controllerCommandExecuted = false;
+            correctDate = false;
             break;
         }
     }
 
-    if (!controllerCommandExecuted) {
-        controllerCommandExecuted = true;
+    if (!correctDate && deviceIdSet) {
         lcdClearLine(2);
         lcdClearLine(3);
         lcdClearLine(4);
@@ -165,52 +171,51 @@ void getDateFromGSM(void) {
         // set indication of reset due to incorrect time stamp
     }
     else {
-
         temporaryBytesArray[5] = ':';
-        tensDigit = gsmResponse[8] - 48;
-        temporaryBytesArray[6] = gsmResponse[8];
+        tensDigit = gsmResponse[p+8] - 48;
+        temporaryBytesArray[6] = gsmResponse[p+8];
         tensDigit = tensDigit * 10;
-        unitsDigit = gsmResponse[9] - 48;
-        temporaryBytesArray[7] = gsmResponse[9];
+        unitsDigit = gsmResponse[p+9] - 48;
+        temporaryBytesArray[7] = gsmResponse[p+9];
         currentYY = tensDigit + unitsDigit; // Store year in decimal
         
         temporaryBytesArray[2] = ':';
-        tensDigit = gsmResponse[11] - 48;
-        temporaryBytesArray[3] = gsmResponse[11];
+        tensDigit = gsmResponse[p+11] - 48;
+        temporaryBytesArray[3] = gsmResponse[p+11];
         tensDigit = tensDigit * 10;
-        unitsDigit = gsmResponse[12] - 48;
-        temporaryBytesArray[4] = gsmResponse[12];
+        unitsDigit = gsmResponse[p+12] - 48;
+        temporaryBytesArray[4] = gsmResponse[p+12];
         currentMM = tensDigit + unitsDigit; // Store month in decimal
 
-        tensDigit = gsmResponse[14] - 48;
-        temporaryBytesArray[0] = gsmResponse[14];
+        tensDigit = gsmResponse[p+14] - 48;
+        temporaryBytesArray[0] = gsmResponse[p+14];
         tensDigit = tensDigit * 10;
-        unitsDigit = gsmResponse[15] - 48;
-        temporaryBytesArray[1] = gsmResponse[15];
+        unitsDigit = gsmResponse[p+15] - 48;
+        temporaryBytesArray[1] = gsmResponse[p+15];
         currentDD = tensDigit + unitsDigit; // Store day in decimal
 
         temporaryBytesArray[8] = ' ';
-        tensDigit = gsmResponse[17] - 48;
-        temporaryBytesArray[9] = gsmResponse[17];
+        tensDigit = gsmResponse[p+17] - 48;
+        temporaryBytesArray[9] = gsmResponse[p+17];
         tensDigit = tensDigit * 10;
-        unitsDigit = gsmResponse[18] - 48;
-        temporaryBytesArray[10] = gsmResponse[18];
+        unitsDigit = gsmResponse[p+18] - 48;
+        temporaryBytesArray[10] = gsmResponse[p+18];
         currentHour = tensDigit + unitsDigit; // Store hour in decimal
 
         temporaryBytesArray[11] = ':';
-        tensDigit = gsmResponse[20] - 48;
-        temporaryBytesArray[12] = gsmResponse[20];
+        tensDigit = gsmResponse[p+20] - 48;
+        temporaryBytesArray[12] = gsmResponse[p+20];
         tensDigit = tensDigit * 10;
-        unitsDigit = gsmResponse[21] - 48;
-        temporaryBytesArray[13] = gsmResponse[21];
+        unitsDigit = gsmResponse[p+21] - 48;
+        temporaryBytesArray[13] = gsmResponse[p+21];
         currentMinutes = tensDigit + unitsDigit; // Store minutes in decimal
 
         temporaryBytesArray[14] = ':';
-        tensDigit = gsmResponse[23] - 48;
-        temporaryBytesArray[15] = gsmResponse[23];
+        tensDigit = gsmResponse[p+23] - 48;
+        temporaryBytesArray[15] = gsmResponse[p+23];
         tensDigit = tensDigit * 10;
-        unitsDigit = gsmResponse[24] - 48;
-        temporaryBytesArray[16] = gsmResponse[24];
+        unitsDigit = gsmResponse[p+24] - 48;
+        temporaryBytesArray[16] = gsmResponse[p+24];
         currentSeconds = tensDigit + unitsDigit; // Store minutes in decimal
         
         lcdClearLine(2);
@@ -225,6 +230,7 @@ void getDateFromGSM(void) {
         __delay_ms(2500);
         __delay_ms(2500);
     }
+     clearGsmResponse();
 #ifdef DEBUG_MODE_ON_H
     //********Debug log#start************//
     transmitStringToDebug("getDateFromGSM_OUT\r\n");
@@ -576,6 +582,7 @@ The Action is decided upon Type of message received.
 void extractReceivedSms(void) {
     unsigned char count = CLEAR, onHour = CLEAR, onMinute = CLEAR;
     unsigned int digit = CLEAR;
+    unsigned char p;
     timer3Count = 30; // 30 sec window
 #ifdef LCD_DISPLAY_ON_H
     removeIcon(sms_icon);
@@ -590,7 +597,8 @@ void extractReceivedSms(void) {
     /*Decode received  Base64 format message*/
 #ifdef Encryption_ON_H
     //strcpyCustom((char *) stringToDecode, (const char *) gsmResponse + 1);
-    strcpyCustom((char *) decodedString, (const char *) gsmResponse + 1);
+    p = (unsigned char)((strstr(gsmResponse, "*")) - gsmResponse);
+    strcpyCustom((char *) decodedString, (const char *) gsmResponse + p + 1);
     
 #ifdef DEBUG_MODE_ON_H
             //********Debug log#start************//
@@ -909,7 +917,7 @@ void extractReceivedSms(void) {
             lcdClearLine(4);
             lcdWriteStringAtCenter("Irri. Not Configured", 2);
             lcdWriteStringAtCenter("Fertigation Disabled:", 3);
-            lcdWriteStringAtCenter("For Priority No:", 4);
+            lcdWriteStringAtCenter("For Priority:", 4);
             lcdSetCursor(4,17);
             clearFieldByte();
             sprintf(fieldByte,"%d",iterator_field+1);
@@ -1013,7 +1021,7 @@ void extractReceivedSms(void) {
                                 lcdClearLine(4);
                                 lcdWriteStringAtCenter("Incorrect Data", 2);
                                 lcdWriteStringAtCenter("Fertigation Disabled:", 3);
-                                lcdWriteStringAtCenter("For Priority No:", 4);
+                                lcdWriteStringAtCenter("For Priority:", 4);
                                 lcdSetCursor(4,17);
                                 clearFieldByte();
                                 sprintf(fieldByte,"%d",iterator_field+1);
@@ -1047,7 +1055,7 @@ void extractReceivedSms(void) {
                 lcdClearLine(3);
                 lcdClearLine(4);
                 lcdWriteStringAtCenter("Fert.Data Configured", 2);
-                lcdWriteStringAtCenter("For Priority No:", 3);
+                lcdWriteStringAtCenter("For Priority:", 3);
                 lcdSetCursor(3,17);
                 clearFieldByte();
                 sprintf(fieldByte,"%d",iterator_field+1);
@@ -1090,7 +1098,7 @@ void extractReceivedSms(void) {
             lcdClearLine(3);
             lcdClearLine(4);
             lcdWriteStringAtCenter("Fert. Data Disabled", 2);
-            lcdWriteStringAtCenter("For Field No:", 3);
+            lcdWriteStringAtCenter("For Field :", 3);
             lcdSetCursor(3,17);
             clearFieldByte();
             sprintf(fieldByte,"%d",iterator_field+1);
@@ -1451,7 +1459,7 @@ void extractReceivedSms(void) {
             lcdClearLine(4);
             lcdWriteStringAtCenter("Fetching Irri.", 2);
             lcdWriteStringAtCenter("Data", 3);
-            lcdWriteStringAtCenter("For Field No:", 4);
+            lcdWriteStringAtCenter("For Field :", 4);
             lcdSetCursor(4,17);
             clearFieldByte();
             sprintf(fieldByte,"%d",iterator_field+1);
@@ -1474,7 +1482,7 @@ void extractReceivedSms(void) {
             lcdClearLine(3);
             lcdClearLine(4);
             lcdWriteStringAtCenter("Irri. not configured", 2);
-            lcdWriteStringAtCenter("For Field No:", 3);
+            lcdWriteStringAtCenter("For Field :", 3);
             lcdSetCursor(3,17);
             clearFieldByte();
             sprintf(fieldByte,"%d",iterator_field+1);
@@ -1646,7 +1654,7 @@ void extractReceivedSms(void) {
             lcdClearLine(4);
             lcdWriteStringAtCenter("Moisture Sensor", 2);
             lcdWriteStringAtCenter("Is Failed", 3);
-            lcdWriteStringAtCenter("For Field No:", 4);
+            lcdWriteStringAtCenter("For Field :", 4);
             lcdSetCursor(4,17);
             clearFieldByte();
             sprintf(fieldByte,"%d",iterator_field+1);
@@ -2420,7 +2428,7 @@ void doLoraSlaveInActiveAction(void) {
                     lcdClearLine(4);				
                     lcdWriteStringAtCenter("Field Valve InActive", 2);
                     lcdWriteStringAtCenter("Ferti. Postponed", 3);
-                    lcdWriteStringAtCenter("For Field No:", 4);
+                    lcdWriteStringAtCenter("For Field :", 4);
                     lcdSetCursor(4,17);
                     clearFieldByte();
                     sprintf(fieldByte,"%d",field_No+1); 
@@ -2452,7 +2460,7 @@ void doLoraSlaveInActiveAction(void) {
                     lcdClearLine(4);				
                     lcdWriteStringAtCenter("Field Valve InActive", 2);
                     lcdWriteStringAtCenter("Ferti. Postponed", 3);
-                    lcdWriteStringAtCenter("For Field No:", 4);
+                    lcdWriteStringAtCenter("For Field :", 4);
                     lcdSetCursor(4,17);
                     clearFieldByte();
                     sprintf(fieldByte,"%d",field_No+1);
@@ -2485,7 +2493,7 @@ void doLoraSlaveInActiveAction(void) {
                     lcdClearLine(4);				
                     lcdWriteStringAtCenter("Field Valve InActive", 2);
                     lcdWriteStringAtCenter("Irri. Postponed", 3);
-                    lcdWriteStringAtCenter("For Field No:", 4);
+                    lcdWriteStringAtCenter("For Field :", 4);
                     lcdSetCursor(4,17);
                     clearFieldByte();
                     sprintf(fieldByte,"%d",field_No+1);
@@ -2510,7 +2518,7 @@ void doLoraSlaveInActiveAction(void) {
                     lcdClearLine(4);				
                     lcdWriteStringAtCenter("Field Valve InActive", 2);
                     lcdWriteStringAtCenter("Irri. Rescheduled", 3);
-                    lcdWriteStringAtCenter("For Field No:", 4);
+                    lcdWriteStringAtCenter("For Field :", 4);
                     lcdSetCursor(4,17);
                     clearFieldByte();
                     sprintf(fieldByte,"%d",field_No+1);
@@ -2608,7 +2616,7 @@ void doDryRunAction(void) {
                     lcdClearLine(4);				
                     lcdWriteStringAtCenter("Dry Run detected", 2);
                     lcdWriteStringAtCenter("Ferti. Postponed", 3);
-                    lcdWriteStringAtCenter("For Field No:", 4);
+                    lcdWriteStringAtCenter("For Field :", 4);
                     lcdSetCursor(4,17);
                     clearFieldByte();
                     sprintf(fieldByte,"%d",field_No+1);
@@ -2643,7 +2651,7 @@ void doDryRunAction(void) {
                     lcdClearLine(4);				
                     lcdWriteStringAtCenter("Dry Run detected", 2);
                     lcdWriteStringAtCenter("Ferti. Postponed", 3);
-                    lcdWriteStringAtCenter("For Field No:", 4);
+                    lcdWriteStringAtCenter("For Field :", 4);
                     lcdSetCursor(4,17);
                     clearFieldByte();
                     sprintf(fieldByte,"%d",field_No+1);
@@ -2680,7 +2688,7 @@ void doDryRunAction(void) {
                     lcdClearLine(4);				
                     lcdWriteStringAtCenter("Dry Run detected", 2);
                     lcdWriteStringAtCenter("Irri. Postponed", 3);
-                    lcdWriteStringAtCenter("For Field No:", 4);
+                    lcdWriteStringAtCenter("For Field :", 4);
                     lcdSetCursor(4,17);
                     clearFieldByte();
                     sprintf(fieldByte,"%d",field_No+1);
@@ -2708,7 +2716,7 @@ void doDryRunAction(void) {
                     lcdClearLine(4);				
                     lcdWriteStringAtCenter("Dry Run detected", 2);
                     lcdWriteStringAtCenter("Irri. Rescheduled", 3);
-                    lcdWriteStringAtCenter("For Field No:", 4);
+                    lcdWriteStringAtCenter("For Field :", 4);
                     lcdSetCursor(4,17);
                     clearFieldByte();
                     sprintf(fieldByte,"%d",field_No+1);
@@ -3216,7 +3224,7 @@ void activateValve(unsigned char FieldNo) {
             lcdClearLine(4);				
             lcdWriteStringAtCenter("Irrigation Started", 2);
             lcdWriteStringAtCenter("With Sensor Failure", 3);
-            lcdWriteStringAtCenter("For Field No:", 4);
+            lcdWriteStringAtCenter("For Field :", 4);
             lcdSetCursor(4,17);
             //sprintf((char *)temporaryBytesArray,"%d",FieldNo+1);
             lcdWriteStringIndex(fieldByte,temp);
@@ -3241,7 +3249,7 @@ void activateValve(unsigned char FieldNo) {
             lcdClearLine(4);				
             lcdWriteStringAtCenter("Irrigation Started", 2);
             //lcdWriteStringAtCenter("With No Response", 3);
-            lcdWriteStringAtCenter("For Field No:", 3);
+            lcdWriteStringAtCenter("For Field :", 3);
             lcdSetCursor(3,17);
             //sprintf(fieldByte,"%d",FieldNo+1);
             lcdWriteStringIndex(fieldByte,temp);
@@ -3298,7 +3306,7 @@ void activateValve(unsigned char FieldNo) {
         lcdClearLine(4);				
         lcdWriteStringAtCenter("Irrigation Skipped", 2);
         lcdWriteStringAtCenter("With No Response", 3);
-        lcdWriteStringAtCenter("For Field No:", 4);
+        lcdWriteStringAtCenter("For Field :", 4);
         lcdSetCursor(4,17);
         //sprintf(fieldByte,"%d",FieldNo+1);
         lcdWriteStringIndex(fieldByte,temp);
@@ -3380,7 +3388,7 @@ void deActivateValve(unsigned char FieldNo) {
         lcdClearLine(4);				
         lcdWriteStringAtCenter("Irrigation Stopped", 2);
         lcdWriteStringAtCenter("Successfully", 3);
-        lcdWriteStringAtCenter("For Field No:", 4);
+        lcdWriteStringAtCenter("For Field :", 4);
         lcdSetCursor(4,17);
         //sprintf(fieldByte,"%d",FieldNo+1);
         lcdWriteStringIndex(fieldByte,temp);
@@ -3405,7 +3413,7 @@ void deActivateValve(unsigned char FieldNo) {
         lcdClearLine(4);				
         lcdWriteStringAtCenter("Irrigation Stopped", 2);
         lcdWriteStringAtCenter("With No Response", 3);
-        lcdWriteStringAtCenter("For Field No:", 4);
+        lcdWriteStringAtCenter("For Field :", 4);
         lcdSetCursor(4,17);
         //sprintf(fieldByte,"%d",FieldNo+1);
         lcdWriteStringIndex(fieldByte,temp);
@@ -3442,9 +3450,9 @@ The purpose of this function is to go into sleep mode until it is interrupted by
  **************************************************************************************************************************/
 void deepSleep(void) {
     // check until sleep timer ends given sleep count
+    wait = 0;
     while (sleepCount > 0 && !newSMSRcvd) {
-        if (isERROR) {
-            isERROR = false;
+        if (isErrorActionNeeded && wait++ < 3) {
 #ifdef LCD_DISPLAY_ON_H   
             lcdClearLine(2);
             lcdClearLine(3);
@@ -3452,15 +3460,32 @@ void deepSleep(void) {
             lcdWriteStringAtCenter("Server Connection", 2);
             lcdWriteStringAtCenter("Error", 3);
 #endif
-            /*
-            if (!isErrorActionTaken) {
+            __delay_ms(3000);
+            __delay_ms(3000);
+            __delay_ms(3000);
+            __delay_ms(3000);
+            __delay_ms(3000);
+            if (!checkSignalStrength()) {
+#ifdef LCD_DISPLAY_ON_H
+            lcdClear();
+            lcdWriteStringAtCenter("Signal Strength",2);
+            lcdWriteStringAtCenter("Is Too Weak",3);
+            lcdWriteStringAtCenter("To Continue",4);
+    #endif
+            } else {
                 setGsmToLocalTime();
-                configureGPRS();
-                isErrorActionTaken = true;
-            }   
-            */ 
+                //configureGPRS();
+                configureMQTT(); // Configure GSM in TEXT mode
+            }
         } 
-        if (phaseFailureDetected) {
+        if (restartcmd) {
+            checkResponse(2);
+            if (isErrorActionNeeded) {
+                clearGsmResponse();
+                wait = 0;
+            }
+            restartcmd = false;
+        } else if (phaseFailureDetected) {
 #ifdef LCD_DISPLAY_ON_H   
             lcdClearLine(2);
             lcdClearLine(3);
@@ -3496,7 +3521,7 @@ void deepSleep(void) {
                 lcdClearLine(3);
                 lcdClearLine(4);				
                 lcdWriteStringAtCenter("Irrigation Running", 2);
-                lcdWriteStringAtCenter("For Field No: ", 3);
+                lcdWriteStringAtCenter("For Field : ", 3);
                 lcdSetCursor(3,17);
                 clearFieldByte();
                 sprintf(fieldByte,"%d",currentFieldNo);
@@ -3558,6 +3583,20 @@ void deepSleep(void) {
                 lcdWriteStringAtCenter("is Active", 3);
 #endif    
             }      
+        } else if (!systemAuthenticated) {
+            lcdClearLine(1);
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            if (!deviceIdSet){
+                lcdWriteStringAtCenter("Waiting For", 2);
+                lcdWriteStringAtCenter("DeviceID", 3);
+            } else {
+                lcdWriteStringAtCenter(factryPswrd, 1);
+                lcdWriteStringAtCenter("Waiting For", 2);
+                lcdWriteStringAtCenter("Authentication", 3);
+            }
+                
         }
         Run_led = DARK; // Led Indication for system in Sleep/ Idle Mode
         inSleepMode = true; // Indicate in Sleep mode
@@ -3572,7 +3611,7 @@ void deepSleep(void) {
             removeIcon(clock_icon);
 #endif		   
         }
-        if (lowBattery) { // low battery from slave
+        if (lowBattery && systemAuthenticated) { // low battery from slave
 #ifdef LCD_DISPLAY_ON_H
             displayIcon(battery_icon);
 #endif
@@ -3583,7 +3622,7 @@ void deepSleep(void) {
             publishNotification("Field Battery Alert",NotSLV1_39,true); // Acknowledge user about successful Authentication
             /***************************/
             lowBattery = false;
-        } else if (resetSlave) {
+        } else if (resetSlave && systemAuthenticated) {
             if (!lowRTCBatteryDetected) {
 #ifdef LCD_DISPLAY_ON_H
                 removeIcon(battery_icon);
@@ -3604,6 +3643,11 @@ void deepSleep(void) {
         //Run_led = GLOW; // Led Indication for system in Operational Mode
         if (!valveDue && !phaseFailureDetected && !lowPhaseCurrentDetected) {
             sleepCount--; // Decrement sleep count after every sleep cycle
+            /*
+            if (!atcmdStart) {
+                checkPingResponse();
+            }
+            */ 
         }
     }
     if (sleepCount == 0 && !newSMSRcvd) {
@@ -4220,9 +4264,6 @@ The purpose of this function is to perform actions on Power on reset or System h
  ***************************************************************************************************************************/
 void actionsOnSystemReset(void) {
     unsigned char resetType = CLEAR;
-    /*
-    unsigned int adcOutput = CLEAR;
-    */ 
 #ifdef DEBUG_MODE_ON_H
     //********Debug log#start************//
     transmitStringToDebug("actionsOnSystemReset_IN\r\n");
@@ -4234,6 +4275,15 @@ void actionsOnSystemReset(void) {
     __delay_ms(3000); //warming time
     __delay_ms(3000); // warming time
     __delay_ms(3000); // warming time
+    if (!checkSignalStrength()) {
+#ifdef LCD_DISPLAY_ON_H
+        lcdClear();
+        lcdWriteStringAtCenter("Signal Strength",2);
+        lcdWriteStringAtCenter("Is Too Weak",3);
+        lcdWriteStringAtCenter("To Continue",4);
+#endif
+        deepSleep();
+    }
     setGsmToLocalTime();
     setFactoryPincode();
     resetType = checkResetType();
@@ -4255,7 +4305,6 @@ void actionsOnSystemReset(void) {
         hardResetMenu(); 
     }
     */
-     
 	if(gsmSetToLocalTime) {
         getDateFromGSM(); // Get today's date from Network
         __delay_ms(100);
@@ -4265,8 +4314,6 @@ void actionsOnSystemReset(void) {
     loadDataFromEeprom(); // Read configured valve data saved in EEprom
     //configureGPRS();
     configureMQTT(); // Configure GSM in TEXT mode
-    //__delay_ms(1000); 					   
-    //deleteMsgFromSIMStorage(); // Clear GSM storage memory for new Messages
     while(!deviceIdSet) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(1);
@@ -4276,7 +4323,6 @@ void actionsOnSystemReset(void) {
         lcdWriteStringAtCenter("Waiting For", 2);
         lcdWriteStringAtCenter("DeviceID", 3);
 #endif       
-        controllerCommandExecuted = true;
         msgIndex = CLEAR;
         __delay_ms(3000);
         //strncpy(pwd, factryPswrd, 6); // consider factory password
@@ -4318,13 +4364,12 @@ void actionsOnSystemReset(void) {
         /***************************/
         publishNotification("Factory Key",factryPswrd,false); // Acknowledge user about successful Authentication
         /***************************/
-        controllerCommandExecuted = true;
-        msgIndex = CLEAR;
+        //msgIndex = CLEAR;
         //strncpy(pwd, factryPswrd, 6); // consider factory password
         sleepCount = 65500; // Set Default Sleep count until next sleep count is calculated
         deepSleep(); // Sleep with default sleep count until system is configured
         // check if Sleep count executed with interrupt occurred due to new SMS command reception
-        
+
         if (newSMSRcvd) {
 #ifdef LCD_DISPLAY_ON_H
             displayIcon(sms_icon);
@@ -4335,321 +4380,323 @@ void actionsOnSystemReset(void) {
             //deleteMsgFromSIMStorage();
         }
     }
-    if (systemAuthenticated) { // check if system is authenticated and valve action is due
-        if (phaseFailure()) { // phase failure detected
-            sleepCount = 65500;
-#ifdef LCD_DISPLAY_ON_H
-            lcdClearLine(2);
-            lcdClearLine(3);
-            lcdClearLine(4);
-            lcdWriteStringAtCenter("System Restarted With", 2);
-            lcdWriteStringAtCenter("Phase Failure", 3); 
-            lcdWriteStringAtCenter("Suspended All Actions", 4);
-#endif
-            /***************************/
-            //sendSms(SmsSR01, userMobileNo, noInfo); // Acknowledge user about System restarted with phase failure
-#ifdef SMS_DELIVERY_REPORT_ON_H
-            sleepCount = 2; // Load sleep count for SMS transmission action
-            sleepCountChangedDueToInterrupt = true; // Sleep count needs to read from memory after SMS transmission 
-            //setBCDdigit(0x05, 0);
-            deepSleep(); // Sleep until message transmission acknowledge SMS is received from service provider 
-            //setBCDdigit(0x0F, 0); // Blank "." BCD Indication for Normal Condition
-#endif
-            phaseFailureActionTaken = true;
-        } else {
-            startFieldNo = 0;
-            // check if System is configured
-            for (iterator_field = 0; iterator_field < fieldCount; iterator_field++) { // scan all valves priority wise
-                // check if any field valve status was true after reset
-                if (fieldValve[iterator_field].status == ON) {
-                    startFieldNo = iterator_field; // start action from interrupted field irrigation valve
-                    //getDueDate(fieldValve[iterator].offPeriod); // calculate next due date of valve
-                    fetchTimefromRTC();
-                    /*** Check if System Restarted on next day of Due date ***/
-                    // if year over passes ||  if month  over passes ||  if day over passes 
-                    if ((currentYY > fieldValve[iterator_field].nextDueYY) || 
-                            (currentMM > fieldValve[iterator_field].nextDueMM && 
-                            currentYY == fieldValve[iterator_field].nextDueYY) || 
-                            (currentDD > fieldValve[iterator_field].nextDueDD && 
-                            currentMM == fieldValve[iterator_field].nextDueMM && 
-                            currentYY == fieldValve[iterator_field].nextDueYY) || 
-                            (currentHour > fieldValve[iterator_field].motorOnTimeHour && 
-                            currentDD == fieldValve[iterator_field].nextDueDD && 
-                            currentMM == fieldValve[iterator_field].nextDueMM && 
-                            currentYY == fieldValve[iterator_field].nextDueYY)) {
-                        valveDue = false; // Clear Valve Due
-                        fieldValve[iterator_field].status = OFF;
-                        fieldValve[iterator_field].cyclesExecuted = fieldValve[iterator_field].cycles;
-                        if (fieldValve[iterator_field].isFertigationEnabled) {
-                            if (fieldValve[iterator_field].fertigationStage == injectPeriod) {
-                                fieldValve[iterator_field].fertigationStage = OFF;
-                                fieldValve[iterator_field].fertigationValveInterrupted = true;
-                                remainingFertigationOnPeriod = readActiveSleepCountFromEeprom();
-                                saveRemainingFertigationOnPeriod();
-                            } else if (fieldValve[iterator_field].fertigationStage == flushPeriod || fieldValve[iterator_field].fertigationStage == wetPeriod) {
-                                fieldValve[iterator_field].fertigationStage = OFF;
-                            }
-                        }
-                        __delay_ms(100);
-#ifdef DEBUG_MODE_ON_H
-                        //********Debug log#start************//
-                        transmitStringToDebug("System restarted with Due valve on next day\r\n");
-                        //********Debug log#end**************//
-#endif
-                        break;
-                    } else { // if system restarted on same day with due valve
-                        valveDue = true; // Set valve ON status
-#ifdef DEBUG_MODE_ON_H 
-                        //********Debug log#start************//
-                        transmitStringToDebug("System restarted with Due valve on same day\r\n");
-                        //********Debug log#end**************//
-#endif
-                        break;
-                    }
-                }
-            }
-            if (valveDue) {
-                dueValveChecked = true;      
-                clearFieldByte();
-				sprintf(fieldByte,"%d",iterator_field+1);	
-                temp = strlen((const char *)fieldByte);
-                switch (resetType) {
-                    case PowerOnReset:
-#ifdef LCD_DISPLAY_ON_H
-                    lcdClearLine(2);
-                    lcdClearLine(3);
-                    lcdClearLine(4);
-                    lcdWriteStringAtCenter("System Restarted For", 2);
-                    lcdWriteStringAtCenter("Power Interrupt", 3); 
-                    lcdWriteStringAtCenter("For Field No.", 4);
-                    lcdSetCursor(4,17);
-                    lcdWriteStringIndex(fieldByte,temp);
-#endif	   
-                    //sendSms(SmsSR02, userMobileNo, fieldNoRequired); // Acknowledge user about system restarted with Valve action
-                    break;
-                    case LowPowerReset:
-#ifdef LCD_DISPLAY_ON_H
-                    lcdClearLine(2);
-                    lcdClearLine(3);
-                    lcdClearLine(4);
-                    lcdWriteStringAtCenter("System Restarted For", 2);
-                    lcdWriteStringAtCenter("Low Power", 3); 
-                    lcdWriteStringAtCenter("For Field No.", 4);
-                    lcdSetCursor(4,17);
-                    lcdWriteStringIndex(fieldByte,temp);
-#endif
-                    //sendSms(SmsSR03, userMobileNo, fieldNoRequired); // Acknowledge user about system restarted with Valve action
-                    break;
-                case HardReset:
-#ifdef LCD_DISPLAY_ON_H
-                    lcdClearLine(2);
-                    lcdClearLine(3);
-                    lcdClearLine(4);
-                    lcdWriteStringAtCenter("System Restarted For", 2);
-                    lcdWriteStringAtCenter("Diagnostic Mode", 3); 
-                    lcdWriteStringAtCenter("For Field No.", 4);
-                    lcdSetCursor(4,17);
-                    lcdWriteStringIndex(fieldByte,temp);
-#endif
-                    //sendSms(SmsSR04, userMobileNo, fieldNoRequired); // Acknowledge user about system restarted with Valve action
-                    break;
-                case SoftResest:
-#ifdef LCD_DISPLAY_ON_H
-                    lcdClearLine(2);
-                    lcdClearLine(3);
-                    lcdClearLine(4);
-                    lcdWriteStringAtCenter("System Restarted For", 2);
-                    lcdWriteStringAtCenter("Phase Detection", 3); 
-                    lcdWriteStringAtCenter("For Field No.", 4);
-                    lcdSetCursor(4,17);
-                    lcdWriteStringIndex(fieldByte,temp);
-#endif
-                    //sendSms(SmsSR05, userMobileNo, fieldNoRequired); // Acknowledge user about system restarted with Valve action
-                    break;
-                case WDTReset:
-#ifdef LCD_DISPLAY_ON_H
-                    lcdClearLine(2);
-                    lcdClearLine(3);
-                    lcdClearLine(4);
-                    lcdWriteStringAtCenter("System Restarted For", 2);
-                    lcdWriteStringAtCenter("Timer Time OUT", 3); 
-                    lcdWriteStringAtCenter("For Field No.", 4);
-                    lcdSetCursor(4,17);
-                    lcdWriteStringIndex(fieldByte,temp);
-#endif
-                    //sendSms(SmsSR06, userMobileNo, fieldNoRequired); // Acknowledge user about system restarted with Valve action
-                    break;
-                case StackReset:
-#ifdef LCD_DISPLAY_ON_H
-                    lcdClearLine(2);
-                    lcdClearLine(3);
-                    lcdClearLine(4);
-                    lcdWriteStringAtCenter("System Restarted For", 2);
-                    lcdWriteStringAtCenter("Stack Error", 3); 
-                    lcdWriteStringAtCenter("For Field No.", 4);
-                    lcdSetCursor(4,17);
-                    lcdWriteStringIndex(fieldByte,temp);
-#endif
-                    //sendSms(SmsSR07, userMobileNo, fieldNoRequired); // Acknowledge user about system restarted with Valve action
-                    break;
-                }
-                resetType = CLEAR;
-                /***************************/
-#ifdef SMS_DELIVERY_REPORT_ON_H
-                sleepCount = 2; // Load sleep count for SMS transmission action
-                sleepCountChangedDueToInterrupt = true; // Sleep count needs to read from memory after SMS transmission 
-                //setBCDdigit(0x05, 0);
-                deepSleep(); // Sleep until message transmission acknowledge SMS is received from service provider
-                //setBCDdigit(0x0F, 0); // Blank "." BCD Indication for Normal Condition
-#endif
-                /***************************/
-#ifdef DEBUG_MODE_ON_H
-                //********Debug log#start************//
-                transmitStringToDebug("System restarted with Due valve\r\n");
-                //********Debug log#end**************//
-#endif
-                sleepCount = readActiveSleepCountFromEeprom();
-            } else { // check if no valve action is due
-#ifdef LCD_DISPLAY_ON_H
+    if (!isErrorActionNeeded) {
+        if (systemAuthenticated) { // check if system is authenticated and valve action is due
+            if (phaseFailure()) { // phase failure detected
+                sleepCount = 65500;
+    #ifdef LCD_DISPLAY_ON_H
                 lcdClearLine(2);
                 lcdClearLine(3);
                 lcdClearLine(4);
-                lcdWriteStringAtCenter("System Restarted", 2);
-#endif
-                switch (resetType) {
-                    case PowerOnReset:
-                        //sendSms(SmsSR08, userMobileNo, noInfo); // Acknowledge user about system restarted with Valve action
-                        break;
-                    case LowPowerReset:
-                        //sendSms(SmsSR09, userMobileNo, noInfo); // Acknowledge user about system restarted with Valve action
-                        break;
-                    case HardReset:
-                        //sendSms(SmsSR10, userMobileNo, noInfo); // Acknowledge user about system restarted with Valve action
-                        break;
-                    case SoftResest:
-                        //sendSms(SmsSR11, userMobileNo, noInfo); // Acknowledge user about system restarted with Valve action
-                        break;
-                    case WDTReset:
-                        //sendSms(SmsSR12, userMobileNo, noInfo); // Acknowledge user about system restarted with Valve action
-                        break;
-                    case StackReset:
-                        //sendSms(SmsSR13, userMobileNo, noInfo); // Acknowledge user about system restarted with Valve action
-                        break;
-                }
-                resetType = CLEAR;
+                lcdWriteStringAtCenter("System Restarted With", 2);
+                lcdWriteStringAtCenter("Phase Failure", 3); 
+                lcdWriteStringAtCenter("Suspended All Actions", 4);
+    #endif
                 /***************************/
-#ifdef SMS_DELIVERY_REPORT_ON_H
+                //sendSms(SmsSR01, userMobileNo, noInfo); // Acknowledge user about System restarted with phase failure
+    #ifdef SMS_DELIVERY_REPORT_ON_H
                 sleepCount = 2; // Load sleep count for SMS transmission action
                 sleepCountChangedDueToInterrupt = true; // Sleep count needs to read from memory after SMS transmission 
                 //setBCDdigit(0x05, 0);
                 deepSleep(); // Sleep until message transmission acknowledge SMS is received from service provider 
                 //setBCDdigit(0x0F, 0); // Blank "." BCD Indication for Normal Condition
-#endif
-                /***************************/
-#ifdef DEBUG_MODE_ON_H
-                //********Debug log#start************//
-                transmitStringToDebug("System restarted W/O Due Valve\r\n");
-                //********Debug log#end**************//
-#endif
+    #endif
+                phaseFailureActionTaken = true;
+            } else {
+                startFieldNo = 0;
+                // check if System is configured
+                for (iterator_field = 0; iterator_field < fieldCount; iterator_field++) { // scan all valves priority wise
+                    // check if any field valve status was true after reset
+                    if (fieldValve[iterator_field].status == ON) {
+                        startFieldNo = iterator_field; // start action from interrupted field irrigation valve
+                        //getDueDate(fieldValve[iterator].offPeriod); // calculate next due date of valve
+                        fetchTimefromRTC();
+                        /*** Check if System Restarted on next day of Due date ***/
+                        // if year over passes ||  if month  over passes ||  if day over passes 
+                        if ((currentYY > fieldValve[iterator_field].nextDueYY) || 
+                                (currentMM > fieldValve[iterator_field].nextDueMM && 
+                                currentYY == fieldValve[iterator_field].nextDueYY) || 
+                                (currentDD > fieldValve[iterator_field].nextDueDD && 
+                                currentMM == fieldValve[iterator_field].nextDueMM && 
+                                currentYY == fieldValve[iterator_field].nextDueYY) || 
+                                (currentHour > fieldValve[iterator_field].motorOnTimeHour && 
+                                currentDD == fieldValve[iterator_field].nextDueDD && 
+                                currentMM == fieldValve[iterator_field].nextDueMM && 
+                                currentYY == fieldValve[iterator_field].nextDueYY)) {
+                            valveDue = false; // Clear Valve Due
+                            fieldValve[iterator_field].status = OFF;
+                            fieldValve[iterator_field].cyclesExecuted = fieldValve[iterator_field].cycles;
+                            if (fieldValve[iterator_field].isFertigationEnabled) {
+                                if (fieldValve[iterator_field].fertigationStage == injectPeriod) {
+                                    fieldValve[iterator_field].fertigationStage = OFF;
+                                    fieldValve[iterator_field].fertigationValveInterrupted = true;
+                                    remainingFertigationOnPeriod = readActiveSleepCountFromEeprom();
+                                    saveRemainingFertigationOnPeriod();
+                                } else if (fieldValve[iterator_field].fertigationStage == flushPeriod || fieldValve[iterator_field].fertigationStage == wetPeriod) {
+                                    fieldValve[iterator_field].fertigationStage = OFF;
+                                }
+                            }
+                            __delay_ms(100);
+    #ifdef DEBUG_MODE_ON_H
+                            //********Debug log#start************//
+                            transmitStringToDebug("System restarted with Due valve on next day\r\n");
+                            //********Debug log#end**************//
+    #endif
+                            break;
+                        } else { // if system restarted on same day with due valve
+                            valveDue = true; // Set valve ON status
+    #ifdef DEBUG_MODE_ON_H 
+                            //********Debug log#start************//
+                            transmitStringToDebug("System restarted with Due valve on same day\r\n");
+                            //********Debug log#end**************//
+    #endif
+                            break;
+                        }
+                    }
+                }
+                if (valveDue) {
+                    dueValveChecked = true;      
+                    clearFieldByte();
+                    sprintf(fieldByte,"%d",iterator_field+1);	
+                    temp = strlen((const char *)fieldByte);
+                    switch (resetType) {
+                        case PowerOnReset:
+    #ifdef LCD_DISPLAY_ON_H
+                        lcdClearLine(2);
+                        lcdClearLine(3);
+                        lcdClearLine(4);
+                        lcdWriteStringAtCenter("System Restarted For", 2);
+                        lcdWriteStringAtCenter("Power Interrupt", 3); 
+                        lcdWriteStringAtCenter("For Field No.", 4);
+                        lcdSetCursor(4,17);
+                        lcdWriteStringIndex(fieldByte,temp);
+    #endif	   
+                        //sendSms(SmsSR02, userMobileNo, fieldNoRequired); // Acknowledge user about system restarted with Valve action
+                        break;
+                        case LowPowerReset:
+    #ifdef LCD_DISPLAY_ON_H
+                        lcdClearLine(2);
+                        lcdClearLine(3);
+                        lcdClearLine(4);
+                        lcdWriteStringAtCenter("System Restarted For", 2);
+                        lcdWriteStringAtCenter("Low Power", 3); 
+                        lcdWriteStringAtCenter("For Field No.", 4);
+                        lcdSetCursor(4,17);
+                        lcdWriteStringIndex(fieldByte,temp);
+    #endif
+                        //sendSms(SmsSR03, userMobileNo, fieldNoRequired); // Acknowledge user about system restarted with Valve action
+                        break;
+                    case HardReset:
+    #ifdef LCD_DISPLAY_ON_H
+                        lcdClearLine(2);
+                        lcdClearLine(3);
+                        lcdClearLine(4);
+                        lcdWriteStringAtCenter("System Restarted For", 2);
+                        lcdWriteStringAtCenter("Diagnostic Mode", 3); 
+                        lcdWriteStringAtCenter("For Field No.", 4);
+                        lcdSetCursor(4,17);
+                        lcdWriteStringIndex(fieldByte,temp);
+    #endif
+                        //sendSms(SmsSR04, userMobileNo, fieldNoRequired); // Acknowledge user about system restarted with Valve action
+                        break;
+                    case SoftResest:
+    #ifdef LCD_DISPLAY_ON_H
+                        lcdClearLine(2);
+                        lcdClearLine(3);
+                        lcdClearLine(4);
+                        lcdWriteStringAtCenter("System Restarted For", 2);
+                        lcdWriteStringAtCenter("Phase Detection", 3); 
+                        lcdWriteStringAtCenter("For Field No.", 4);
+                        lcdSetCursor(4,17);
+                        lcdWriteStringIndex(fieldByte,temp);
+    #endif
+                        //sendSms(SmsSR05, userMobileNo, fieldNoRequired); // Acknowledge user about system restarted with Valve action
+                        break;
+                    case WDTReset:
+    #ifdef LCD_DISPLAY_ON_H
+                        lcdClearLine(2);
+                        lcdClearLine(3);
+                        lcdClearLine(4);
+                        lcdWriteStringAtCenter("System Restarted For", 2);
+                        lcdWriteStringAtCenter("Timer Time OUT", 3); 
+                        lcdWriteStringAtCenter("For Field No.", 4);
+                        lcdSetCursor(4,17);
+                        lcdWriteStringIndex(fieldByte,temp);
+    #endif
+                        //sendSms(SmsSR06, userMobileNo, fieldNoRequired); // Acknowledge user about system restarted with Valve action
+                        break;
+                    case StackReset:
+    #ifdef LCD_DISPLAY_ON_H
+                        lcdClearLine(2);
+                        lcdClearLine(3);
+                        lcdClearLine(4);
+                        lcdWriteStringAtCenter("System Restarted For", 2);
+                        lcdWriteStringAtCenter("Stack Error", 3); 
+                        lcdWriteStringAtCenter("For Field No.", 4);
+                        lcdSetCursor(4,17);
+                        lcdWriteStringIndex(fieldByte,temp);
+    #endif
+                        //sendSms(SmsSR07, userMobileNo, fieldNoRequired); // Acknowledge user about system restarted with Valve action
+                        break;
+                    }
+                    resetType = CLEAR;
+                    /***************************/
+    #ifdef SMS_DELIVERY_REPORT_ON_H
+                    sleepCount = 2; // Load sleep count for SMS transmission action
+                    sleepCountChangedDueToInterrupt = true; // Sleep count needs to read from memory after SMS transmission 
+                    //setBCDdigit(0x05, 0);
+                    deepSleep(); // Sleep until message transmission acknowledge SMS is received from service provider
+                    //setBCDdigit(0x0F, 0); // Blank "." BCD Indication for Normal Condition
+    #endif
+                    /***************************/
+    #ifdef DEBUG_MODE_ON_H
+                    //********Debug log#start************//
+                    transmitStringToDebug("System restarted with Due valve\r\n");
+                    //********Debug log#end**************//
+    #endif
+                    sleepCount = readActiveSleepCountFromEeprom();
+                } else { // check if no valve action is due
+    #ifdef LCD_DISPLAY_ON_H
+                    lcdClearLine(2);
+                    lcdClearLine(3);
+                    lcdClearLine(4);
+                    lcdWriteStringAtCenter("System Restarted", 2);
+    #endif
+                    switch (resetType) {
+                        case PowerOnReset:
+                            //sendSms(SmsSR08, userMobileNo, noInfo); // Acknowledge user about system restarted with Valve action
+                            break;
+                        case LowPowerReset:
+                            //sendSms(SmsSR09, userMobileNo, noInfo); // Acknowledge user about system restarted with Valve action
+                            break;
+                        case HardReset:
+                            //sendSms(SmsSR10, userMobileNo, noInfo); // Acknowledge user about system restarted with Valve action
+                            break;
+                        case SoftResest:
+                            //sendSms(SmsSR11, userMobileNo, noInfo); // Acknowledge user about system restarted with Valve action
+                            break;
+                        case WDTReset:
+                            //sendSms(SmsSR12, userMobileNo, noInfo); // Acknowledge user about system restarted with Valve action
+                            break;
+                        case StackReset:
+                            //sendSms(SmsSR13, userMobileNo, noInfo); // Acknowledge user about system restarted with Valve action
+                            break;
+                    }
+                    resetType = CLEAR;
+                    /***************************/
+    #ifdef SMS_DELIVERY_REPORT_ON_H
+                    sleepCount = 2; // Load sleep count for SMS transmission action
+                    sleepCountChangedDueToInterrupt = true; // Sleep count needs to read from memory after SMS transmission 
+                    //setBCDdigit(0x05, 0);
+                    deepSleep(); // Sleep until message transmission acknowledge SMS is received from service provider 
+                    //setBCDdigit(0x0F, 0); // Blank "." BCD Indication for Normal Condition
+    #endif
+                    /***************************/
+    #ifdef DEBUG_MODE_ON_H
+                    //********Debug log#start************//
+                    transmitStringToDebug("System restarted W/O Due Valve\r\n");
+                    //********Debug log#end**************//
+    #endif
+                }
             }
         }
-    }
-    if (isRTCBatteryDrained()) {
-#ifdef LCD_DISPLAY_ON_H   
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdClearLine(4);				
-        lcdWriteStringAtCenter("RTC Battery is low", 2);
-        lcdWriteStringAtCenter("Replace RTC battery", 3);
-#endif  
-        /***************************/
-        publishNotification("null",NotRTC2_6,false); // Acknowledge user about successful Authentication
-        /***************************/
-        /***************************/
-        publishNotification("RTC Battery Alert",NotRTC1_30,false); // Acknowledge user about successful Authentication
-        /***************************/
-        /***************************/
-        //sendSms(SmsRTC1, userMobileNo, noInfo); // Acknowledge user about Please replace RTC battery
-#ifdef SMS_DELIVERY_REPORT_ON_H
-        sleepCount = 2; // Load sleep count for SMS transmission action
-        sleepCountChangedDueToInterrupt = true; // Sleep count needs to read from memory after SMS transmission
-        //setBCDdigit(0x05, 0);
-        deepSleep(); // Sleep until message transmission acknowledge SMS is received from service provider
-        //setBCDdigit(0x0F, 0); // Blank "." BCD Indication for Normal Condition
-#endif
-        /***************************/
-        if (gsmSetToLocalTime) {
-            getDateFromGSM(); // Get today's date from Network
-            __delay_ms(1000);
-            feedTimeInRTC(); // Feed fetched date from network into RTC
-            __delay_ms(1000);
-        }
-    } else if (lowRTCBatteryDetected) {
-        lowRTCBatteryDetected = false;
-        __delay_ms(100);
-        saveRTCBatteryStatus();
-        __delay_ms(100);
-        if (gsmSetToLocalTime) {
-            getDateFromGSM(); // Get today's date from Network
-            __delay_ms(1000);
-            feedTimeInRTC(); // Feed fetched date from network into RTC
-            __delay_ms(1000);
-#ifdef LCD_DISPLAY_ON_H   
+        if (isRTCBatteryDrained()) {
+    #ifdef LCD_DISPLAY_ON_H   
             lcdClearLine(2);
             lcdClearLine(3);
             lcdClearLine(4);				
-            lcdWriteStringAtCenter("New RTCBattery Found", 2);
-            lcdWriteStringAtCenter("System Time Synced", 3);
-            lcdWriteStringAtCenter("To Local Time", 4);
-#endif
-            __delay_ms(1000);
+            lcdWriteStringAtCenter("RTC Battery is low", 2);
+            lcdWriteStringAtCenter("Replace RTC battery", 3);
+    #endif  
             /***************************/
-            publishNotification("null",NotRTC3_7,false); // Acknowledge user about successful Authentication
+            publishNotification("null",NotRTC2_6,false); // Acknowledge user about successful Authentication
             /***************************/
             /***************************/
-            publishNotification("RTC Battery Alert",NotRTC4_36,false); // Acknowledge user about successful Authentication
+            publishNotification("RTC Battery Alert",NotRTC1_30,false); // Acknowledge user about successful Authentication
             /***************************/
             /***************************/
-            //sendSms(SmsRTC3, userMobileNo, noInfo); // Acknowledge user about New RTC battery found, system time is set to local time
-#ifdef SMS_DELIVERY_REPORT_ON_H
+            //sendSms(SmsRTC1, userMobileNo, noInfo); // Acknowledge user about Please replace RTC battery
+    #ifdef SMS_DELIVERY_REPORT_ON_H
             sleepCount = 2; // Load sleep count for SMS transmission action
             sleepCountChangedDueToInterrupt = true; // Sleep count needs to read from memory after SMS transmission
             //setBCDdigit(0x05, 0);
             deepSleep(); // Sleep until message transmission acknowledge SMS is received from service provider
             //setBCDdigit(0x0F, 0); // Blank "." BCD Indication for Normal Condition
-#endif
+    #endif
             /***************************/
+            if (gsmSetToLocalTime) {
+                getDateFromGSM(); // Get today's date from Network
+                __delay_ms(1000);
+                feedTimeInRTC(); // Feed fetched date from network into RTC
+                __delay_ms(1000);
+            }
+        } else if (lowRTCBatteryDetected) {
+            lowRTCBatteryDetected = false;
+            __delay_ms(100);
+            saveRTCBatteryStatus();
+            __delay_ms(100);
+            if (gsmSetToLocalTime) {
+                getDateFromGSM(); // Get today's date from Network
+                __delay_ms(1000);
+                feedTimeInRTC(); // Feed fetched date from network into RTC
+                __delay_ms(1000);
+    #ifdef LCD_DISPLAY_ON_H   
+                lcdClearLine(2);
+                lcdClearLine(3);
+                lcdClearLine(4);				
+                lcdWriteStringAtCenter("New RTCBattery Found", 2);
+                lcdWriteStringAtCenter("System Time Synced", 3);
+                lcdWriteStringAtCenter("To Local Time", 4);
+    #endif
+                __delay_ms(1000);
+                /***************************/
+                publishNotification("null",NotRTC3_7,false); // Acknowledge user about successful Authentication
+                /***************************/
+                /***************************/
+                publishNotification("RTC Battery Alert",NotRTC4_36,false); // Acknowledge user about successful Authentication
+                /***************************/
+                /***************************/
+                //sendSms(SmsRTC3, userMobileNo, noInfo); // Acknowledge user about New RTC battery found, system time is set to local time
+    #ifdef SMS_DELIVERY_REPORT_ON_H
+                sleepCount = 2; // Load sleep count for SMS transmission action
+                sleepCountChangedDueToInterrupt = true; // Sleep count needs to read from memory after SMS transmission
+                //setBCDdigit(0x05, 0);
+                deepSleep(); // Sleep until message transmission acknowledge SMS is received from service provider
+                //setBCDdigit(0x0F, 0); // Blank "." BCD Indication for Normal Condition
+    #endif
+                /***************************/
+            } else {
+    #ifdef LCD_DISPLAY_ON_H   
+                lcdClearLine(2);
+                lcdClearLine(3);
+                lcdClearLine(4);				
+                lcdWriteStringAtCenter("New RTCBattery Found", 2);
+                lcdWriteStringAtCenter("Sync System Manually", 3);
+                lcdWriteStringAtCenter("To Local Time", 4);
+    #endif
+                __delay_ms(1000);
+                /***************************/
+                publishNotification("null",NotRTC3_7,false); // Acknowledge user about successful Authentication
+                /***************************/
+                /***************************/
+                publishNotification("RTC Battery Alert",NotRTC4_36,false); // Acknowledge user about successful Authentication
+                /***************************/
+                /***************************/
+                //sendSms(SmsRTC4, userMobileNo, noInfo); // Acknowledge user about New RTC battery found, please set system time manually to local time
+    #ifdef SMS_DELIVERY_REPORT_ON_H
+                sleepCount = 2; // Load sleep count for SMS transmission action
+                sleepCountChangedDueToInterrupt = true; // Sleep count needs to read from memory after SMS transmission
+                //setBCDdigit(0x05, 0);
+                deepSleep(); // Sleep until message transmission acknowledge SMS is received from service provider
+                //setBCDdigit(0x0F, 0); // Blank "." BCD Indication for Normal Condition
+    #endif
+                /***************************/
+            }
         } else {
-#ifdef LCD_DISPLAY_ON_H   
-            lcdClearLine(2);
-            lcdClearLine(3);
-            lcdClearLine(4);				
-            lcdWriteStringAtCenter("New RTCBattery Found", 2);
-            lcdWriteStringAtCenter("Sync System Manually", 3);
-            lcdWriteStringAtCenter("To Local Time", 4);
-#endif
-            __delay_ms(1000);
             /***************************/
             publishNotification("null",NotRTC3_7,false); // Acknowledge user about successful Authentication
             /***************************/
-            /***************************/
-            publishNotification("RTC Battery Alert",NotRTC4_36,false); // Acknowledge user about successful Authentication
-            /***************************/
-            /***************************/
-            //sendSms(SmsRTC4, userMobileNo, noInfo); // Acknowledge user about New RTC battery found, please set system time manually to local time
-#ifdef SMS_DELIVERY_REPORT_ON_H
-            sleepCount = 2; // Load sleep count for SMS transmission action
-            sleepCountChangedDueToInterrupt = true; // Sleep count needs to read from memory after SMS transmission
-            //setBCDdigit(0x05, 0);
-            deepSleep(); // Sleep until message transmission acknowledge SMS is received from service provider
-            //setBCDdigit(0x0F, 0); // Blank "." BCD Indication for Normal Condition
-#endif
-            /***************************/
         }
-    } else {
-        /***************************/
-        publishNotification("null",NotRTC3_7,false); // Acknowledge user about successful Authentication
-        /***************************/
     }
 }
 /*************actionsOnSystemReset#End**********/
@@ -5335,6 +5382,8 @@ void clearGsmResponse(void) {
         gsmResponse[iterator] = '\0';
     }
     msgIndex = CLEAR;
+    lastChar = false;
+    lastCharPos = 1;
     /***************************/
 #ifdef DEBUG_MODE_ON_H
     //********Debug log#start************//

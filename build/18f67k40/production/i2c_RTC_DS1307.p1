@@ -2549,227 +2549,239 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> -> 0 `i `uc
 ]
 "351
-[; ;./variableDefinitions.h: 351: unsigned char timer3Count = 0;
+[; ;./variableDefinitions.h: 351: unsigned char wait = 0;
+[v _wait `uc ~T0 @X0 1 e ]
+[i _wait
+-> -> 0 `i `uc
+]
+"352
+[; ;./variableDefinitions.h: 352: unsigned char timer3Count = 0;
 [v _timer3Count `uc ~T0 @X0 1 e ]
 [i _timer3Count
 -> -> 0 `i `uc
 ]
-"352
-[; ;./variableDefinitions.h: 352: unsigned char rxCharacter = 0;
+"353
+[; ;./variableDefinitions.h: 353: unsigned char rxCharacter = 0;
 [v _rxCharacter `uc ~T0 @X0 1 e ]
 [i _rxCharacter
 -> -> 0 `i `uc
 ]
-"353
-[; ;./variableDefinitions.h: 353: unsigned char msgIndex = 0;
+"354
+[; ;./variableDefinitions.h: 354: unsigned char msgIndex = 0;
 [v _msgIndex `uc ~T0 @X0 1 e ]
 [i _msgIndex
 -> -> 0 `i `uc
 ]
-"354
-[; ;./variableDefinitions.h: 354: unsigned char iterator = 0;
+"355
+[; ;./variableDefinitions.h: 355: unsigned char iterator = 0;
 [v _iterator `uc ~T0 @X0 1 e ]
 [i _iterator
 -> -> 0 `i `uc
 ]
-"355
-[; ;./variableDefinitions.h: 355: unsigned char iterator_field = 0;
+"356
+[; ;./variableDefinitions.h: 356: unsigned char iterator_field = 0;
 [v _iterator_field `uc ~T0 @X0 1 e ]
 [i _iterator_field
 -> -> 0 `i `uc
 ]
-"356
-[; ;./variableDefinitions.h: 356: unsigned char fieldCount = 16;
+"357
+[; ;./variableDefinitions.h: 357: unsigned char fieldCount = 16;
 [v _fieldCount `uc ~T0 @X0 1 e ]
 [i _fieldCount
 -> -> 16 `i `uc
 ]
-"357
-[; ;./variableDefinitions.h: 357: unsigned char resetCount = 0;
+"358
+[; ;./variableDefinitions.h: 358: unsigned char resetCount = 0;
 [v _resetCount `uc ~T0 @X0 1 e ]
 [i _resetCount
 -> -> 0 `i `uc
 ]
-"358
-[; ;./variableDefinitions.h: 358: unsigned char startFieldNo = 0;
+"359
+[; ;./variableDefinitions.h: 359: unsigned char startFieldNo = 0;
 [v _startFieldNo `uc ~T0 @X0 1 e ]
 [i _startFieldNo
 -> -> 0 `i `uc
 ]
-"359
-[; ;./variableDefinitions.h: 359: unsigned char space = 0x20;
+"360
+[; ;./variableDefinitions.h: 360: unsigned char space = 0x20;
 [v _space `uc ~T0 @X0 1 e ]
 [i _space
 -> -> 32 `i `uc
 ]
-"360
-[; ;./variableDefinitions.h: 360: unsigned char terminateSms = 0x1A;
+"361
+[; ;./variableDefinitions.h: 361: unsigned char terminateSms = 0x1A;
 [v _terminateSms `uc ~T0 @X0 1 e ]
 [i _terminateSms
 -> -> 26 `i `uc
 ]
-"361
-[; ;./variableDefinitions.h: 361: unsigned char enter = 0x0D;
+"362
+[; ;./variableDefinitions.h: 362: unsigned char enter = 0x0D;
 [v _enter `uc ~T0 @X0 1 e ]
 [i _enter
 -> -> 13 `i `uc
 ]
-"362
-[; ;./variableDefinitions.h: 362: unsigned char newLine = 0x0A;
+"363
+[; ;./variableDefinitions.h: 363: unsigned char newLine = 0x0A;
 [v _newLine `uc ~T0 @X0 1 e ]
 [i _newLine
 -> -> 10 `i `uc
 ]
-"363
-[; ;./variableDefinitions.h: 363: unsigned char hundredsDigit = 0;
+"364
+[; ;./variableDefinitions.h: 364: unsigned char hundredsDigit = 0;
 [v _hundredsDigit `uc ~T0 @X0 1 e ]
 [i _hundredsDigit
 -> -> 0 `i `uc
 ]
-"364
-[; ;./variableDefinitions.h: 364: unsigned char tensDigit = 0;
+"365
+[; ;./variableDefinitions.h: 365: unsigned char tensDigit = 0;
 [v _tensDigit `uc ~T0 @X0 1 e ]
 [i _tensDigit
 -> -> 0 `i `uc
 ]
-"365
-[; ;./variableDefinitions.h: 365: unsigned char unitsDigit = 0;
+"366
+[; ;./variableDefinitions.h: 366: unsigned char unitsDigit = 0;
 [v _unitsDigit `uc ~T0 @X0 1 e ]
 [i _unitsDigit
 -> -> 0 `i `uc
 ]
-"366
-[; ;./variableDefinitions.h: 366: unsigned char Timer0Overflow = 0;
+"367
+[; ;./variableDefinitions.h: 367: unsigned char Timer0Overflow = 0;
 [v _Timer0Overflow `uc ~T0 @X0 1 e ]
 [i _Timer0Overflow
 -> -> 0 `i `uc
 ]
-"367
-[; ;./variableDefinitions.h: 367: unsigned char Timer1Overflow = 0;
+"368
+[; ;./variableDefinitions.h: 368: unsigned char Timer1Overflow = 0;
 [v _Timer1Overflow `uc ~T0 @X0 1 e ]
 [i _Timer1Overflow
 -> -> 0 `i `uc
 ]
-"368
-[; ;./variableDefinitions.h: 368: unsigned char Timer3Overflow = 0;
+"369
+[; ;./variableDefinitions.h: 369: unsigned char Timer3Overflow = 0;
 [v _Timer3Overflow `uc ~T0 @X0 1 e ]
 [i _Timer3Overflow
 -> -> 0 `i `uc
 ]
-"369
-[; ;./variableDefinitions.h: 369: unsigned char filtrationCycleSequence = 0;
+"370
+[; ;./variableDefinitions.h: 370: unsigned char filtrationCycleSequence = 0;
 [v _filtrationCycleSequence `uc ~T0 @X0 1 e ]
 [i _filtrationCycleSequence
 -> -> 0 `i `uc
 ]
-"370
-[; ;./variableDefinitions.h: 370: unsigned char currentYY = 0;
+"371
+[; ;./variableDefinitions.h: 371: unsigned char currentYY = 0;
 [v _currentYY `uc ~T0 @X0 1 e ]
 [i _currentYY
 -> -> 0 `i `uc
 ]
-"371
-[; ;./variableDefinitions.h: 371: unsigned char currentMM = 0;
+"372
+[; ;./variableDefinitions.h: 372: unsigned char currentMM = 0;
 [v _currentMM `uc ~T0 @X0 1 e ]
 [i _currentMM
 -> -> 0 `i `uc
 ]
-"372
-[; ;./variableDefinitions.h: 372: unsigned char currentDD = 0;
+"373
+[; ;./variableDefinitions.h: 373: unsigned char currentDD = 0;
 [v _currentDD `uc ~T0 @X0 1 e ]
 [i _currentDD
 -> -> 0 `i `uc
 ]
-"373
-[; ;./variableDefinitions.h: 373: unsigned char currentHour = 0;
+"374
+[; ;./variableDefinitions.h: 374: unsigned char currentHour = 0;
 [v _currentHour `uc ~T0 @X0 1 e ]
 [i _currentHour
 -> -> 0 `i `uc
 ]
-"374
-[; ;./variableDefinitions.h: 374: unsigned char currentMinutes = 0;
+"375
+[; ;./variableDefinitions.h: 375: unsigned char currentMinutes = 0;
 [v _currentMinutes `uc ~T0 @X0 1 e ]
 [i _currentMinutes
 -> -> 0 `i `uc
 ]
-"375
-[; ;./variableDefinitions.h: 375: unsigned char currentSeconds = 0;
+"376
+[; ;./variableDefinitions.h: 376: unsigned char currentSeconds = 0;
 [v _currentSeconds `uc ~T0 @X0 1 e ]
 [i _currentSeconds
 -> -> 0 `i `uc
 ]
-"376
-[; ;./variableDefinitions.h: 376: unsigned char dueYY = 0;
+"377
+[; ;./variableDefinitions.h: 377: unsigned char dueYY = 0;
 [v _dueYY `uc ~T0 @X0 1 e ]
 [i _dueYY
 -> -> 0 `i `uc
 ]
-"377
-[; ;./variableDefinitions.h: 377: unsigned char dueMM = 0;
+"378
+[; ;./variableDefinitions.h: 378: unsigned char dueMM = 0;
 [v _dueMM `uc ~T0 @X0 1 e ]
 [i _dueMM
 -> -> 0 `i `uc
 ]
-"378
-[; ;./variableDefinitions.h: 378: unsigned char filtrationDelay1 = 0;
+"379
+[; ;./variableDefinitions.h: 379: unsigned char filtrationDelay1 = 0;
 [v _filtrationDelay1 `uc ~T0 @X0 1 e ]
 [i _filtrationDelay1
 -> -> 0 `i `uc
 ]
-"379
-[; ;./variableDefinitions.h: 379: unsigned char filtrationDelay2 = 0;
+"380
+[; ;./variableDefinitions.h: 380: unsigned char filtrationDelay2 = 0;
 [v _filtrationDelay2 `uc ~T0 @X0 1 e ]
 [i _filtrationDelay2
 -> -> 0 `i `uc
 ]
-"380
-[; ;./variableDefinitions.h: 380: unsigned char filtrationDelay3 = 0;
+"381
+[; ;./variableDefinitions.h: 381: unsigned char filtrationDelay3 = 0;
 [v _filtrationDelay3 `uc ~T0 @X0 1 e ]
 [i _filtrationDelay3
 -> -> 0 `i `uc
 ]
-"381
-[; ;./variableDefinitions.h: 381: unsigned char filtrationOnTime = 0;
+"382
+[; ;./variableDefinitions.h: 382: unsigned char filtrationOnTime = 0;
 [v _filtrationOnTime `uc ~T0 @X0 1 e ]
 [i _filtrationOnTime
 -> -> 0 `i `uc
 ]
-"382
-[; ;./variableDefinitions.h: 382: unsigned char dryRunCheckCount = 0;
+"383
+[; ;./variableDefinitions.h: 383: unsigned char dryRunCheckCount = 0;
 [v _dryRunCheckCount `uc ~T0 @X0 1 e ]
 [i _dryRunCheckCount
 -> -> 0 `i `uc
 ]
-"383
-[; ;./variableDefinitions.h: 383: unsigned char currentFieldNo = 0;
+"384
+[; ;./variableDefinitions.h: 384: unsigned char currentFieldNo = 0;
 [v _currentFieldNo `uc ~T0 @X0 1 e ]
 [i _currentFieldNo
 -> -> 0 `i `uc
 ]
-"384
-[; ;./variableDefinitions.h: 384: unsigned char pulses = 0;
+"385
+[; ;./variableDefinitions.h: 385: unsigned char pulses = 0;
 [v _pulses `uc ~T0 @X0 1 e ]
 [i _pulses
 -> -> 0 `i `uc
 ]
-"385
-[; ;./variableDefinitions.h: 385: char fieldByte[3] = "";
+"386
+[; ;./variableDefinitions.h: 386: unsigned char lastCharPos = 0;
+[v _lastCharPos `uc ~T0 @X0 1 e ]
+[i _lastCharPos
+-> -> 0 `i `uc
+]
+"387
+[; ;./variableDefinitions.h: 387: char fieldByte[3] = "";
 [v _fieldByte `uc ~T0 @X0 -> 3 `i e ]
 [i _fieldByte
 :U ..
 -> 0 `c
 ..
 ]
-"386
-[; ;./variableDefinitions.h: 386: char temporaryBytesArray[26] = "";
+"388
+[; ;./variableDefinitions.h: 388: char temporaryBytesArray[26] = "";
 [v _temporaryBytesArray `uc ~T0 @X0 -> 26 `i e ]
 [i _temporaryBytesArray
 :U ..
 -> 0 `c
 ..
 ]
-"387
-[; ;./variableDefinitions.h: 387: char deviceId[] = "a0d1d8668dd8";
+"389
+[; ;./variableDefinitions.h: 389: char deviceId[] = "a0d1d8668dd8";
 [v _deviceId `uc ~T0 @X0 -> 13 `i e ]
 [i _deviceId
 :U ..
@@ -2788,44 +2800,44 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"388
-[; ;./variableDefinitions.h: 388: char dueDate[15] = "";
+"390
+[; ;./variableDefinitions.h: 390: char dueDate[15] = "";
 [v _dueDate `uc ~T0 @X0 -> 15 `i e ]
 [i _dueDate
 :U ..
 -> 0 `c
 ..
 ]
-"389
-[; ;./variableDefinitions.h: 389: char pwd[7] = "";
+"391
+[; ;./variableDefinitions.h: 391: char pwd[7] = "";
 [v _pwd `uc ~T0 @X0 -> 7 `i e ]
 [i _pwd
 :U ..
 -> 0 `c
 ..
 ]
-"390
-[; ;./variableDefinitions.h: 390: char factryPswrd[7] = "";
+"392
+[; ;./variableDefinitions.h: 392: char factryPswrd[7] = "";
 [v _factryPswrd `uc ~T0 @X0 -> 7 `i e ]
 [i _factryPswrd
 :U ..
 -> 0 `c
 ..
 ]
-"391
-[; ;./variableDefinitions.h: 391: size_t temp = 0;
+"393
+[; ;./variableDefinitions.h: 393: size_t temp = 0;
 [v _temp `ui ~T0 @X0 1 e ]
 [i _temp
 -> -> 0 `i `ui
 ]
-"404
+"406
 [v _decodedString `uc ~T0 @X0 -> 200 `i e ]
 [i _decodedString
 :U ..
 -> -> 0 `ui `uc
 ..
 ]
-"407
+"409
 [v _mqtt_ca `Cuc ~T0 @X0 -> 1437 `i e ]
 [i _mqtt_ca
 :U ..
@@ -4268,7 +4280,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"436
+"438
 [v _admin `Cuc ~T0 @X0 -> 3 `i e ]
 [i _admin
 :U ..
@@ -4277,7 +4289,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"437
+"439
 [v _alive1 `Cuc ~T0 @X0 -> 6 `i e ]
 [i _alive1
 :U ..
@@ -4289,7 +4301,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"438
+"440
 [v _set `Cuc ~T0 @X0 -> 4 `i e ]
 [i _set
 :U ..
@@ -4299,7 +4311,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"439
+"441
 [v _enable `Cuc ~T0 @X0 -> 7 `i e ]
 [i _enable
 :U ..
@@ -4312,7 +4324,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"440
+"442
 [v _disable `Cuc ~T0 @X0 -> 8 `i e ]
 [i _disable
 :U ..
@@ -4326,7 +4338,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"441
+"443
 [v _active `Cuc ~T0 @X0 -> 7 `i e ]
 [i _active
 :U ..
@@ -4339,7 +4351,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"442
+"444
 [v _dactive `Cuc ~T0 @X0 -> 8 `i e ]
 [i _dactive
 :U ..
@@ -4353,7 +4365,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"443
+"445
 [v _hold `Cuc ~T0 @X0 -> 5 `i e ]
 [i _hold
 :U ..
@@ -4364,7 +4376,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"444
+"446
 [v _extract `Cuc ~T0 @X0 -> 8 `i e ]
 [i _extract
 :U ..
@@ -4378,16 +4390,16 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"445
+"447
 [v _ok `Cuc ~T0 @X0 -> 3 `i e ]
 [i _ok
 :U ..
--> 111 `c
--> 107 `c
+-> 79 `c
+-> 75 `c
 -> 0 `c
 ..
 ]
-"446
+"448
 [v _time `Cuc ~T0 @X0 -> 5 `i e ]
 [i _time
 :U ..
@@ -4398,7 +4410,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"447
+"449
 [v _feed `Cuc ~T0 @X0 -> 5 `i e ]
 [i _feed
 :U ..
@@ -4409,7 +4421,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"448
+"450
 [v _fdata `Cuc ~T0 @X0 -> 6 `i e ]
 [i _fdata
 :U ..
@@ -4421,7 +4433,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"449
+"451
 [v _inject `Cuc ~T0 @X0 -> 7 `i e ]
 [i _inject
 :U ..
@@ -4434,7 +4446,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"450
+"452
 [v _map `Cuc ~T0 @X0 -> 4 `i e ]
 [i _map
 :U ..
@@ -4444,7 +4456,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"451
+"453
 [v _ct `Cuc ~T0 @X0 -> 4 `i e ]
 [i _ct
 :U ..
@@ -4454,7 +4466,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"452
+"454
 [v _setct `Cuc ~T0 @X0 -> 6 `i e ]
 [i _setct
 :U ..
@@ -4466,7 +4478,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"453
+"455
 [v _secret `Cuc ~T0 @X0 -> 12 `i e ]
 [i _secret
 :U ..
@@ -4484,7 +4496,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"454
+"456
 [v _getct `Cuc ~T0 @X0 -> 4 `i e ]
 [i _getct
 :U ..
@@ -4494,7 +4506,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"455
+"457
 [v _getfreq `Cuc ~T0 @X0 -> 5 `i e ]
 [i _getfreq
 :U ..
@@ -4505,18 +4517,20 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"456
-[v _countryCode `Cuc ~T0 @X0 -> 4 `i e ]
-[i _countryCode
+"458
+[v _csq `Cuc ~T0 @X0 -> 6 `i e ]
+[i _csq
 :U ..
--> 43 `c
--> 57 `c
--> 49 `c
+-> 67 `c
+-> 83 `c
+-> 81 `c
+-> 58 `c
+-> 32 `c
 -> 0 `c
 ..
 ]
-"457
-[v _mqttConnect `Cuc ~T0 @X0 -> 19 `i e ]
+"459
+[v _mqttConnect `Cuc ~T0 @X0 -> 15 `i e ]
 [i _mqttConnect
 :U ..
 -> 43 `c
@@ -4533,14 +4547,137 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 67 `c
 -> 84 `c
 -> 58 `c
--> 32 `c
--> 48 `c
--> 44 `c
--> 48 `c
+-> 0 `c
+..
+]
+"460
+[v _mqttLost `Cuc ~T0 @X0 -> 16 `i e ]
+[i _mqttLost
+:U ..
+-> 43 `c
+-> 67 `c
+-> 77 `c
+-> 81 `c
+-> 84 `c
+-> 84 `c
+-> 67 `c
+-> 79 `c
+-> 78 `c
+-> 78 `c
+-> 76 `c
+-> 79 `c
+-> 83 `c
+-> 84 `c
+-> 58 `c
 -> 0 `c
 ..
 ]
 "461
+[v _gsmError `Cuc ~T0 @X0 -> 6 `i e ]
+[i _gsmError
+:U ..
+-> 43 `c
+-> 67 `c
+-> 71 `c
+-> 69 `c
+-> 86 `c
+-> 0 `c
+..
+]
+"462
+[v _gsmRestart `Cuc ~T0 @X0 -> 10 `i e ]
+[i _gsmRestart
+:U ..
+-> 42 `c
+-> 65 `c
+-> 84 `c
+-> 82 `c
+-> 69 `c
+-> 65 `c
+-> 68 `c
+-> 89 `c
+-> 58 `c
+-> 0 `c
+..
+]
+"463
+[v _cclk `Cuc ~T0 @X0 -> 7 `i e ]
+[i _cclk
+:U ..
+-> 43 `c
+-> 67 `c
+-> 67 `c
+-> 76 `c
+-> 75 `c
+-> 58 `c
+-> 0 `c
+..
+]
+"464
+[v _mqttStart `Cuc ~T0 @X0 -> 13 `i e ]
+[i _mqttStart
+:U ..
+-> 43 `c
+-> 67 `c
+-> 77 `c
+-> 81 `c
+-> 84 `c
+-> 84 `c
+-> 83 `c
+-> 84 `c
+-> 65 `c
+-> 82 `c
+-> 84 `c
+-> 58 `c
+-> 0 `c
+..
+]
+"465
+[v _mqttSub `Cuc ~T0 @X0 -> 11 `i e ]
+[i _mqttSub
+:U ..
+-> 43 `c
+-> 67 `c
+-> 77 `c
+-> 81 `c
+-> 84 `c
+-> 84 `c
+-> 83 `c
+-> 85 `c
+-> 66 `c
+-> 58 `c
+-> 0 `c
+..
+]
+"466
+[v _netRestart `Cuc ~T0 @X0 -> 8 `i e ]
+[i _netRestart
+:U ..
+-> 80 `c
+-> 66 `c
+-> 32 `c
+-> 68 `c
+-> 79 `c
+-> 78 `c
+-> 69 `c
+-> 0 `c
+..
+]
+"467
+[v _pdnRestart `Cuc ~T0 @X0 -> 8 `i e ]
+[i _pdnRestart
+:U ..
+-> 80 `c
+-> 68 `c
+-> 78 `c
+-> 32 `c
+-> 65 `c
+-> 67 `c
+-> 84 `c
+-> 0 `c
+..
+]
+"471
 [v _on `Cuc ~T0 @X0 -> 3 `i e ]
 [i _on
 :U ..
@@ -4549,7 +4686,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"462
+"472
 [v _off `Cuc ~T0 @X0 -> 4 `i e ]
 [i _off
 :U ..
@@ -4559,7 +4696,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"463
+"473
 [v _slave `Cuc ~T0 @X0 -> 6 `i e ]
 [i _slave
 :U ..
@@ -4571,7 +4708,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"464
+"474
 [v _ack `Cuc ~T0 @X0 -> 4 `i e ]
 [i _ack
 :U ..
@@ -4581,7 +4718,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"465
+"475
 [v _idle `Cuc ~T0 @X0 -> 5 `i e ]
 [i _idle
 :U ..
@@ -4592,7 +4729,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"466
+"476
 [v _master `Cuc ~T0 @X0 -> 7 `i e ]
 [i _master
 :U ..
@@ -4605,7 +4742,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"467
+"477
 [v _error `Cuc ~T0 @X0 -> 6 `i e ]
 [i _error
 :U ..
@@ -4617,7 +4754,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"468
+"478
 [v _alive `Cuc ~T0 @X0 -> 6 `i e ]
 [i _alive
 :U ..
@@ -4629,7 +4766,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"469
+"479
 [v _sensor `Cuc ~T0 @X0 -> 7 `i e ]
 [i _sensor
 :U ..
@@ -4642,7 +4779,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"470
+"480
 [v _lowbattery `Cuc ~T0 @X0 -> 16 `i e ]
 [i _lowbattery
 :U ..
@@ -4664,7 +4801,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"471
+"481
 [v _resetslave `Cuc ~T0 @X0 -> 11 `i e ]
 [i _resetslave
 :U ..
@@ -4681,28 +4818,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"472
-[v _cmqttError `Cuc ~T0 @X0 -> 14 `i e ]
-[i _cmqttError
-:U ..
--> 67 `c
--> 77 `c
--> 81 `c
--> 84 `c
--> 84 `c
--> 67 `c
--> 79 `c
--> 78 `c
--> 78 `c
--> 76 `c
--> 79 `c
--> 83 `c
--> 84 `c
--> 0 `c
-..
-]
-"486
-[; ;./variableDefinitions.h: 486: const char SmsAU4_63[64] = "System Authenticated with Phase failure, suspending all actions";
+"495
+[; ;./variableDefinitions.h: 495: const char SmsAU4_63[64] = "System Authenticated with Phase failure, suspending all actions";
 [v _SmsAU4_63 `Cuc ~T0 @X0 -> 64 `i e ]
 [i _SmsAU4_63
 :U ..
@@ -4772,8 +4889,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"492
-[; ;./variableDefinitions.h: 492: const char cmd1_6[7] = "*AUOK#";
+"501
+[; ;./variableDefinitions.h: 501: const char cmd1_6[7] = "*AUOK#";
 [v _cmd1_6 `Cuc ~T0 @X0 -> 7 `i e ]
 [i _cmd1_6
 :U ..
@@ -4786,8 +4903,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"493
-[; ;./variableDefinitions.h: 493: const char cmd2_9[10] = "*AUERROR#";
+"502
+[; ;./variableDefinitions.h: 502: const char cmd2_9[10] = "*AUERROR#";
 [v _cmd2_9 `Cuc ~T0 @X0 -> 10 `i e ]
 [i _cmd2_9
 :U ..
@@ -4803,8 +4920,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"494
-[; ;./variableDefinitions.h: 494: const char cmd3_9[10] = "*ALIVEOK#";
+"503
+[; ;./variableDefinitions.h: 503: const char cmd3_9[10] = "*ALIVEOK#";
 [v _cmd3_9 `Cuc ~T0 @X0 -> 10 `i e ]
 [i _cmd3_9
 :U ..
@@ -4820,8 +4937,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"495
-[; ;./variableDefinitions.h: 495: const char cmd4_7[8] = "*SETOK#";
+"504
+[; ;./variableDefinitions.h: 504: const char cmd4_7[8] = "*SETOK#";
 [v _cmd4_7 `Cuc ~T0 @X0 -> 8 `i e ]
 [i _cmd4_7
 :U ..
@@ -4835,8 +4952,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"496
-[; ;./variableDefinitions.h: 496: const char cmd5_8[9] = "*HOLDOK#";
+"505
+[; ;./variableDefinitions.h: 505: const char cmd5_8[9] = "*HOLDOK#";
 [v _cmd5_8 `Cuc ~T0 @X0 -> 9 `i e ]
 [i _cmd5_8
 :U ..
@@ -4851,8 +4968,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"497
-[; ;./variableDefinitions.h: 497: const char cmd6_10[11] = "*ENABLEOK#";
+"506
+[; ;./variableDefinitions.h: 506: const char cmd6_10[11] = "*ENABLEOK#";
 [v _cmd6_10 `Cuc ~T0 @X0 -> 11 `i e ]
 [i _cmd6_10
 :U ..
@@ -4869,8 +4986,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"498
-[; ;./variableDefinitions.h: 498: const char cmd7_17[18] = "*ENABLEINCORRECT#";
+"507
+[; ;./variableDefinitions.h: 507: const char cmd7_17[18] = "*ENABLEINCORRECT#";
 [v _cmd7_17 `Cuc ~T0 @X0 -> 18 `i e ]
 [i _cmd7_17
 :U ..
@@ -4894,8 +5011,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"499
-[; ;./variableDefinitions.h: 499: const char cmd8_13[14] = "*ENABLEERROR#";
+"508
+[; ;./variableDefinitions.h: 508: const char cmd8_13[14] = "*ENABLEERROR#";
 [v _cmd8_13 `Cuc ~T0 @X0 -> 14 `i e ]
 [i _cmd8_13
 :U ..
@@ -4915,8 +5032,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"500
-[; ;./variableDefinitions.h: 500: const char cmd9_11[12] = "*DISABLEOK#";
+"509
+[; ;./variableDefinitions.h: 509: const char cmd9_11[12] = "*DISABLEOK#";
 [v _cmd9_11 `Cuc ~T0 @X0 -> 12 `i e ]
 [i _cmd9_11
 :U ..
@@ -4934,8 +5051,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"501
-[; ;./variableDefinitions.h: 501: const char cmd10_10[11] = "*ACTIVEOK#";
+"510
+[; ;./variableDefinitions.h: 510: const char cmd10_10[11] = "*ACTIVEOK#";
 [v _cmd10_10 `Cuc ~T0 @X0 -> 11 `i e ]
 [i _cmd10_10
 :U ..
@@ -4952,8 +5069,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"502
-[; ;./variableDefinitions.h: 502: const char cmd11_11[12] = "*DACTIVEOK#";
+"511
+[; ;./variableDefinitions.h: 511: const char cmd11_11[12] = "*DACTIVEOK#";
 [v _cmd11_11 `Cuc ~T0 @X0 -> 12 `i e ]
 [i _cmd11_11
 :U ..
@@ -4971,8 +5088,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"503
-[; ;./variableDefinitions.h: 503: const char cmd12_13[14] = "*ACTIVEERROR#";
+"512
+[; ;./variableDefinitions.h: 512: const char cmd12_13[14] = "*ACTIVEERROR#";
 [v _cmd12_13 `Cuc ~T0 @X0 -> 14 `i e ]
 [i _cmd12_13
 :U ..
@@ -4992,8 +5109,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"504
-[; ;./variableDefinitions.h: 504: const char cmd13_8[9] = "*FEEDOK#";
+"513
+[; ;./variableDefinitions.h: 513: const char cmd13_8[9] = "*FEEDOK#";
 [v _cmd13_8 `Cuc ~T0 @X0 -> 9 `i e ]
 [i _cmd13_8
 :U ..
@@ -5008,8 +5125,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"505
-[; ;./variableDefinitions.h: 505: const char cmd14_11[12] = "*FEEDERROR#";
+"514
+[; ;./variableDefinitions.h: 514: const char cmd14_11[12] = "*FEEDERROR#";
 [v _cmd14_11 `Cuc ~T0 @X0 -> 12 `i e ]
 [i _cmd14_11
 :U ..
@@ -5027,8 +5144,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"506
-[; ;./variableDefinitions.h: 506: const char cmd15_6[7] = "*CTOK#";
+"515
+[; ;./variableDefinitions.h: 515: const char cmd15_6[7] = "*CTOK#";
 [v _cmd15_6 `Cuc ~T0 @X0 -> 7 `i e ]
 [i _cmd15_6
 :U ..
@@ -5041,8 +5158,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"507
-[; ;./variableDefinitions.h: 507: const char cmd16_9[10] = "*CTERROR#";
+"516
+[; ;./variableDefinitions.h: 516: const char cmd16_9[10] = "*CTERROR#";
 [v _cmd16_9 `Cuc ~T0 @X0 -> 10 `i e ]
 [i _cmd16_9
 :U ..
@@ -5058,8 +5175,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"508
-[; ;./variableDefinitions.h: 508: const char cmd17_11[12] = "*FREQERROR#";
+"517
+[; ;./variableDefinitions.h: 517: const char cmd17_11[12] = "*FREQERROR#";
 [v _cmd17_11 `Cuc ~T0 @X0 -> 12 `i e ]
 [i _cmd17_11
 :U ..
@@ -5077,8 +5194,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"509
-[; ;./variableDefinitions.h: 509: const char cmd18_12[13] = "*CTSETERROR#";
+"518
+[; ;./variableDefinitions.h: 518: const char cmd18_12[13] = "*CTSETERROR#";
 [v _cmd18_12 `Cuc ~T0 @X0 -> 13 `i e ]
 [i _cmd18_12
 :U ..
@@ -5097,8 +5214,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"510
-[; ;./variableDefinitions.h: 510: const char cmd18_7[8] = "*MAPOK#";
+"519
+[; ;./variableDefinitions.h: 519: const char cmd18_7[8] = "*MAPOK#";
 [v _cmd18_7 `Cuc ~T0 @X0 -> 8 `i e ]
 [i _cmd18_7
 :U ..
@@ -5112,8 +5229,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"511
-[; ;./variableDefinitions.h: 511: const char cmd19_10[11] = "*MAPERROR#";
+"520
+[; ;./variableDefinitions.h: 520: const char cmd19_10[11] = "*MAPERROR#";
 [v _cmd19_10 `Cuc ~T0 @X0 -> 11 `i e ]
 [i _cmd19_10
 :U ..
@@ -5130,8 +5247,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"523
-[; ;./variableDefinitions.h: 523: const char NotIrr4_30[] = "Valve started for field ";
+"532
+[; ;./variableDefinitions.h: 532: const char NotIrr4_30[] = "Valve started for field ";
 [v _NotIrr4_30 `Cuc ~T0 @X0 -> 25 `i e ]
 [i _NotIrr4_30
 :U ..
@@ -5162,8 +5279,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"524
-[; ;./variableDefinitions.h: 524: const char NotIrr5_30[] = "Valve stopped for field ";
+"533
+[; ;./variableDefinitions.h: 533: const char NotIrr5_30[] = "Valve stopped for field ";
 [v _NotIrr5_30 `Cuc ~T0 @X0 -> 25 `i e ]
 [i _NotIrr5_30
 :U ..
@@ -5194,8 +5311,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"525
-[; ;./variableDefinitions.h: 525: const char NotIrr6_54[] = "Wet field detected. Valve not started for field ";
+"534
+[; ;./variableDefinitions.h: 534: const char NotIrr6_54[] = "Wet field detected. Valve not started for field ";
 [v _NotIrr6_54 `Cuc ~T0 @X0 -> 49 `i e ]
 [i _NotIrr6_54
 :U ..
@@ -5250,8 +5367,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"526
-[; ;./variableDefinitions.h: 526: const char NotIrr7_16[] = "Irrigation No:";
+"535
+[; ;./variableDefinitions.h: 535: const char NotIrr7_16[] = "Irrigation No:";
 [v _NotIrr7_16 `Cuc ~T0 @X0 -> 15 `i e ]
 [i _NotIrr7_16
 :U ..
@@ -5272,8 +5389,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"527
-[; ;./variableDefinitions.h: 527: const char NotIrr8_48[] = "Valve skipped with no response from field ";
+"536
+[; ;./variableDefinitions.h: 536: const char NotIrr8_48[] = "Valve skipped with no response from field ";
 [v _NotIrr8_48 `Cuc ~T0 @X0 -> 43 `i e ]
 [i _NotIrr8_48
 :U ..
@@ -5322,8 +5439,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"528
-[; ;./variableDefinitions.h: 528: const char NotIrr9_48[] = "Valve stopped without response from field ";
+"537
+[; ;./variableDefinitions.h: 537: const char NotIrr9_48[] = "Valve stopped without response from field ";
 [v _NotIrr9_48 `Cuc ~T0 @X0 -> 43 `i e ]
 [i _NotIrr9_48
 :U ..
@@ -5372,8 +5489,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"535
-[; ;./variableDefinitions.h: 535: const char NotFert5_33[] = "Injector started for field ";
+"544
+[; ;./variableDefinitions.h: 544: const char NotFert5_33[] = "Injector started for field ";
 [v _NotFert5_33 `Cuc ~T0 @X0 -> 28 `i e ]
 [i _NotFert5_33
 :U ..
@@ -5407,8 +5524,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"536
-[; ;./variableDefinitions.h: 536: const char NotFert6_33[] = "Injector stopped for field ";
+"545
+[; ;./variableDefinitions.h: 545: const char NotFert6_33[] = "Injector stopped for field ";
 [v _NotFert6_33 `Cuc ~T0 @X0 -> 28 `i e ]
 [i _NotFert6_33
 :U ..
@@ -5442,8 +5559,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"537
-[; ;./variableDefinitions.h: 537: const char NotFert7_70[] = "Injector stopped with fertilizer level sensor failure for field ";
+"546
+[; ;./variableDefinitions.h: 546: const char NotFert7_70[] = "Injector stopped with fertilizer level sensor failure for field ";
 [v _NotFert7_70 `Cuc ~T0 @X0 -> 65 `i e ]
 [i _NotFert7_70
 :U ..
@@ -5514,8 +5631,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"538
-[; ;./variableDefinitions.h: 538: const char NotFert8_59[] = "Injector stopped with low fertilizer level for field ";
+"547
+[; ;./variableDefinitions.h: 547: const char NotFert8_59[] = "Injector stopped with low fertilizer level for field ";
 [v _NotFert8_59 `Cuc ~T0 @X0 -> 54 `i e ]
 [i _NotFert8_59
 :U ..
@@ -5575,8 +5692,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"545
-[; ;./variableDefinitions.h: 545: const char NotSR01_59[] = "System restarted with phase failure, suspending all actions";
+"554
+[; ;./variableDefinitions.h: 554: const char NotSR01_59[] = "System restarted with phase failure, suspending all actions";
 [v _NotSR01_59 `Cuc ~T0 @X0 -> 60 `i e ]
 [i _NotSR01_59
 :U ..
@@ -5642,8 +5759,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"546
-[; ;./variableDefinitions.h: 546: const char NotSR02_76[] = "System restarted for Power Interrupt with incomplete Irrigation for field ";
+"555
+[; ;./variableDefinitions.h: 555: const char NotSR02_76[] = "System restarted for Power Interrupt with incomplete Irrigation for field ";
 [v _NotSR02_76 `Cuc ~T0 @X0 -> 75 `i e ]
 [i _NotSR02_76
 :U ..
@@ -5724,8 +5841,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"547
-[; ;./variableDefinitions.h: 547: const char NotSR03_73[] = "System restarted for Low Power In with incomplete Irrigation for field ";
+"556
+[; ;./variableDefinitions.h: 556: const char NotSR03_73[] = "System restarted for Low Power In with incomplete Irrigation for field ";
 [v _NotSR03_73 `Cuc ~T0 @X0 -> 72 `i e ]
 [i _NotSR03_73
 :U ..
@@ -5803,8 +5920,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"548
-[; ;./variableDefinitions.h: 548: const char NotSR04_75[] = "System restarted in Diagnostic Mode with incomplete Irrigation for field ";
+"557
+[; ;./variableDefinitions.h: 557: const char NotSR04_75[] = "System restarted in Diagnostic Mode with incomplete Irrigation for field ";
 [v _NotSR04_75 `Cuc ~T0 @X0 -> 74 `i e ]
 [i _NotSR04_75
 :U ..
@@ -5884,8 +6001,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"549
-[; ;./variableDefinitions.h: 549: const char NotSR05_80[] = "System restarted for All Phase Detection with incomplete Irrigation for field ";
+"558
+[; ;./variableDefinitions.h: 558: const char NotSR05_80[] = "System restarted for All Phase Detection with incomplete Irrigation for field ";
 [v _NotSR05_80 `Cuc ~T0 @X0 -> 79 `i e ]
 [i _NotSR05_80
 :U ..
@@ -5970,8 +6087,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"550
-[; ;./variableDefinitions.h: 550: const char NotSR06_72[] = "System restarted for WDT Timeout with incomplete Irrigation for field ";
+"559
+[; ;./variableDefinitions.h: 559: const char NotSR06_72[] = "System restarted for WDT Timeout with incomplete Irrigation for field ";
 [v _NotSR06_72 `Cuc ~T0 @X0 -> 71 `i e ]
 [i _NotSR06_72
 :U ..
@@ -6048,8 +6165,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"551
-[; ;./variableDefinitions.h: 551: const char NotSR07_72[] = "System restarted for Stack Error with incomplete Irrigation for field ";
+"560
+[; ;./variableDefinitions.h: 560: const char NotSR07_72[] = "System restarted for Stack Error with incomplete Irrigation for field ";
 [v _NotSR07_72 `Cuc ~T0 @X0 -> 71 `i e ]
 [i _NotSR07_72
 :U ..
@@ -6126,8 +6243,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"552
-[; ;./variableDefinitions.h: 552: const char NotSR08_36[] = "System restarted for Power Interrupt";
+"561
+[; ;./variableDefinitions.h: 561: const char NotSR08_36[] = "System restarted for Power Interrupt";
 [v _NotSR08_36 `Cuc ~T0 @X0 -> 37 `i e ]
 [i _NotSR08_36
 :U ..
@@ -6170,8 +6287,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"553
-[; ;./variableDefinitions.h: 553: const char NotSR09_30[] = "System restarted for Low Power";
+"562
+[; ;./variableDefinitions.h: 562: const char NotSR09_30[] = "System restarted for Low Power";
 [v _NotSR09_30 `Cuc ~T0 @X0 -> 31 `i e ]
 [i _NotSR09_30
 :U ..
@@ -6208,8 +6325,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"554
-[; ;./variableDefinitions.h: 554: const char NotSR10_35[] = "System restarted in Diagnostic mode";
+"563
+[; ;./variableDefinitions.h: 563: const char NotSR10_35[] = "System restarted in Diagnostic mode";
 [v _NotSR10_35 `Cuc ~T0 @X0 -> 36 `i e ]
 [i _NotSR10_35
 :U ..
@@ -6251,8 +6368,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"555
-[; ;./variableDefinitions.h: 555: const char NotSR11_40[] = "System restarted for All Phase Detection";
+"564
+[; ;./variableDefinitions.h: 564: const char NotSR11_40[] = "System restarted for All Phase Detection";
 [v _NotSR11_40 `Cuc ~T0 @X0 -> 41 `i e ]
 [i _NotSR11_40
 :U ..
@@ -6299,8 +6416,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"556
-[; ;./variableDefinitions.h: 556: const char NotSR12_32[] = "System restarted for WDT timeout";
+"565
+[; ;./variableDefinitions.h: 565: const char NotSR12_32[] = "System restarted for WDT timeout";
 [v _NotSR12_32 `Cuc ~T0 @X0 -> 33 `i e ]
 [i _NotSR12_32
 :U ..
@@ -6339,8 +6456,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"557
-[; ;./variableDefinitions.h: 557: const char NotSR13_32[] = "System restarted for stack error";
+"566
+[; ;./variableDefinitions.h: 566: const char NotSR13_32[] = "System restarted for stack error";
 [v _NotSR13_32 `Cuc ~T0 @X0 -> 33 `i e ]
 [i _NotSR13_32
 :U ..
@@ -6379,8 +6496,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"558
-[; ;./variableDefinitions.h: 558: const char NotSR14_58[] = "System reset occurred, login code reset to Factory setting";
+"567
+[; ;./variableDefinitions.h: 567: const char NotSR14_58[] = "System reset occurred, login code reset to Factory setting";
 [v _NotSR14_58 `Cuc ~T0 @X0 -> 59 `i e ]
 [i _NotSR14_58
 :U ..
@@ -6445,8 +6562,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"559
-[; ;./variableDefinitions.h: 559: const char NotSR15_49[] = "System reset occurred, Irrigation setting deleted";
+"568
+[; ;./variableDefinitions.h: 568: const char NotSR15_49[] = "System reset occurred, Irrigation setting deleted";
 [v _NotSR15_49 `Cuc ~T0 @X0 -> 50 `i e ]
 [i _NotSR15_49
 :U ..
@@ -6502,8 +6619,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"561
-[; ;./variableDefinitions.h: 561: const char NotRTC1_30[] = "Please replace RTC battery";
+"570
+[; ;./variableDefinitions.h: 570: const char NotRTC1_30[] = "Please replace RTC battery";
 [v _NotRTC1_30 `Cuc ~T0 @X0 -> 27 `i e ]
 [i _NotRTC1_30
 :U ..
@@ -6536,8 +6653,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"562
-[; ;./variableDefinitions.h: 562: const char NotRTC2_6[] = "*RLOW#";
+"571
+[; ;./variableDefinitions.h: 571: const char NotRTC2_6[] = "*RLOW#";
 [v _NotRTC2_6 `Cuc ~T0 @X0 -> 7 `i e ]
 [i _NotRTC2_6
 :U ..
@@ -6550,8 +6667,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"563
-[; ;./variableDefinitions.h: 563: const char NotRTC3_7[] = "*RFULL#";
+"572
+[; ;./variableDefinitions.h: 572: const char NotRTC3_7[] = "*RFULL#";
 [v _NotRTC3_7 `Cuc ~T0 @X0 -> 8 `i e ]
 [i _NotRTC3_7
 :U ..
@@ -6565,8 +6682,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"564
-[; ;./variableDefinitions.h: 564: const char NotRTC4_36[] = "System time is set to local time";
+"573
+[; ;./variableDefinitions.h: 573: const char NotRTC4_36[] = "System time is set to local time";
 [v _NotRTC4_36 `Cuc ~T0 @X0 -> 33 `i e ]
 [i _NotRTC4_36
 :U ..
@@ -6605,8 +6722,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"566
-[; ;./variableDefinitions.h: 566: const char NotRTC6_36[] = "Please sync system time manually";
+"575
+[; ;./variableDefinitions.h: 575: const char NotRTC6_36[] = "Please sync system time manually";
 [v _NotRTC6_36 `Cuc ~T0 @X0 -> 33 `i e ]
 [i _NotRTC6_36
 :U ..
@@ -6645,8 +6762,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"569
-[; ;./variableDefinitions.h: 569: const char NotSLV1_39[] = "Please replace Battery for Field ";
+"578
+[; ;./variableDefinitions.h: 578: const char NotSLV1_39[] = "Please replace Battery for Field ";
 [v _NotSLV1_39 `Cuc ~T0 @X0 -> 34 `i e ]
 [i _NotSLV1_39
 :U ..
@@ -6686,8 +6803,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"570
-[; ;./variableDefinitions.h: 570: const char NotSLV2_6[] = "*FLOW#";
+"579
+[; ;./variableDefinitions.h: 579: const char NotSLV2_6[] = "*FLOW#";
 [v _NotSLV2_6 `Cuc ~T0 @X0 -> 7 `i e ]
 [i _NotSLV2_6
 :U ..
@@ -6700,8 +6817,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"571
-[; ;./variableDefinitions.h: 571: const char NotSLV3_7[] = "*FFULL#";
+"580
+[; ;./variableDefinitions.h: 580: const char NotSLV3_7[] = "*FFULL#";
 [v _NotSLV3_7 `Cuc ~T0 @X0 -> 8 `i e ]
 [i _NotSLV3_7
 :U ..
@@ -6715,8 +6832,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"572
-[; ;./variableDefinitions.h: 572: const char NotSLV4_38[] = "Battery Reset Occured for Field ";
+"581
+[; ;./variableDefinitions.h: 581: const char NotSLV4_38[] = "Battery Reset Occured for Field ";
 [v _NotSLV4_38 `Cuc ~T0 @X0 -> 33 `i e ]
 [i _NotSLV4_38
 :U ..
@@ -6755,8 +6872,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"576
-[; ;./variableDefinitions.h: 576: const char NotDR1_84[] = "Action Suspended. Irrigation scheduled to next day with fertigation for Field ";
+"585
+[; ;./variableDefinitions.h: 585: const char NotDR1_84[] = "Action Suspended. Irrigation scheduled to next day with fertigation for Field ";
 [v _NotDR1_84 `Cuc ~T0 @X0 -> 79 `i e ]
 [i _NotDR1_84
 :U ..
@@ -6841,8 +6958,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"577
-[; ;./variableDefinitions.h: 577: const char NotDR2_84[] = "Action Suspended. Irrigation scheduled to next day with fertigation for Field ";
+"586
+[; ;./variableDefinitions.h: 586: const char NotDR2_84[] = "Action Suspended. Irrigation scheduled to next day with fertigation for Field ";
 [v _NotDR2_84 `Cuc ~T0 @X0 -> 79 `i e ]
 [i _NotDR2_84
 :U ..
@@ -6927,8 +7044,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"578
-[; ;./variableDefinitions.h: 578: const char NotDR3_67[] = "Action Suspended. Irrigation scheduled to next day for Field ";
+"587
+[; ;./variableDefinitions.h: 587: const char NotDR3_67[] = "Action Suspended. Irrigation scheduled to next day for Field ";
 [v _NotDR3_67 `Cuc ~T0 @X0 -> 62 `i e ]
 [i _NotDR3_67
 :U ..
@@ -6996,8 +7113,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"579
-[; ;./variableDefinitions.h: 579: const char NotDR4_72[] = "Action Suspended. Irrigation scheduled to next due date for Field ";
+"588
+[; ;./variableDefinitions.h: 588: const char NotDR4_72[] = "Action Suspended. Irrigation scheduled to next due date for Field ";
 [v _NotDR4_72 `Cuc ~T0 @X0 -> 67 `i e ]
 [i _NotDR4_72
 :U ..
@@ -7070,8 +7187,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"584
-[; ;./variableDefinitions.h: 584: const char NotMotor1_55[] = "Action completed for due fields. Motor switched off";
+"593
+[; ;./variableDefinitions.h: 593: const char NotMotor1_55[] = "Action completed for due fields. Motor switched off";
 [v _NotMotor1_55 `Cuc ~T0 @X0 -> 52 `i e ]
 [i _NotMotor1_55
 :U ..
@@ -7129,8 +7246,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"595
-[; ;./variableDefinitions.h: 595: const char NotPh1_50[] = "Phase failure detected, suspending all actions";
+"604
+[; ;./variableDefinitions.h: 604: const char NotPh1_50[] = "Phase failure detected, suspending all actions";
 [v _NotPh1_50 `Cuc ~T0 @X0 -> 47 `i e ]
 [i _NotPh1_50
 :U ..
@@ -7183,8 +7300,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"596
-[; ;./variableDefinitions.h: 596: const char NotPh2_72[] = "Low Phase current detected, actions suspended, please restart system";
+"605
+[; ;./variableDefinitions.h: 605: const char NotPh2_72[] = "Low Phase current detected, actions suspended, please restart system";
 [v _NotPh2_72 `Cuc ~T0 @X0 -> 69 `i e ]
 [i _NotPh2_72
 :U ..
@@ -7259,8 +7376,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"597
-[; ;./variableDefinitions.h: 597: const char NotPh3_23[] = "Phase loss detected";
+"606
+[; ;./variableDefinitions.h: 606: const char NotPh3_23[] = "Phase loss detected";
 [v _NotPh3_23 `Cuc ~T0 @X0 -> 20 `i e ]
 [i _NotPh3_23
 :U ..
@@ -7286,8 +7403,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"600
-[; ;./variableDefinitions.h: 600: const char NotPh6_22[] = "All Phase detected";
+"609
+[; ;./variableDefinitions.h: 609: const char NotPh6_22[] = "All Phase detected";
 [v _NotPh6_22 `Cuc ~T0 @X0 -> 19 `i e ]
 [i _NotPh6_22
 :U ..
@@ -7312,8 +7429,8 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"602
-[; ;./variableDefinitions.h: 602: const char NotMS1_57[] = "Moisture sensor is failed, Valve started for field ";
+"611
+[; ;./variableDefinitions.h: 611: const char NotMS1_57[] = "Moisture sensor is failed, Valve started for field ";
 [v _NotMS1_57 `Cuc ~T0 @X0 -> 52 `i e ]
 [i _NotMS1_57
 :U ..
@@ -7371,7 +7488,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"609
+"618
 [v _gsmResponse `uc ~T0 @X0 -> 200 `i e ]
 [i _gsmResponse
 :U ..
@@ -7383,226 +7500,236 @@ Version 4.0 HI-TECH Software Intermediate Code
 -> 0 `c
 ..
 ]
-"611
+"620
 [v _fieldMap `uc ~T0 @X0 -> 96 `i e ]
 [i _fieldMap
 :U ..
 -> -> 0 `ui `uc
 ..
 ]
-"616
+"625
 [v _deviceIdSet `a ~T0 @X0 1 e ]
 [i _deviceIdSet
 -> -> 0 `i `a
 ]
-"617
+"626
 [v _systemAuthenticated `a ~T0 @X0 1 e ]
 [i _systemAuthenticated
 -> -> 0 `i `a
 ]
-"618
+"627
 [v _newSMSRcvd `a ~T0 @X0 1 e ]
 [i _newSMSRcvd
 -> -> 0 `i `a
 ]
-"619
+"628
 [v _checkMoistureSensor `a ~T0 @X0 1 e ]
 [i _checkMoistureSensor
 -> -> 0 `i `a
 ]
-"620
+"629
 [v _moistureSensorFailed `a ~T0 @X0 1 e ]
 [i _moistureSensorFailed
 -> -> 0 `i `a
 ]
-"621
+"630
 [v _controllerCommandExecuted `a ~T0 @X0 1 e ]
 [i _controllerCommandExecuted
 -> -> 0 `i `a
 ]
-"622
+"631
 [v _currentDateCalled `a ~T0 @X0 1 e ]
 [i _currentDateCalled
 -> -> 0 `i `a
 ]
-"623
+"632
 [v _sleepCountChangedDueToInterrupt `a ~T0 @X0 1 e ]
 [i _sleepCountChangedDueToInterrupt
 -> -> 0 `i `a
 ]
-"624
+"633
 [v _inSleepMode `a ~T0 @X0 1 e ]
 [i _inSleepMode
 -> -> 0 `i `a
 ]
-"625
+"634
 [v _dryRunDetected `a ~T0 @X0 1 e ]
 [i _dryRunDetected
 -> -> 0 `i `a
 ]
-"626
+"635
 [v _lowPhaseCurrentDetected `a ~T0 @X0 1 e ]
 [i _lowPhaseCurrentDetected
 -> -> 0 `i `a
 ]
-"627
+"636
 [v _valveDue `a ~T0 @X0 1 e ]
 [i _valveDue
 -> -> 0 `i `a
 ]
-"628
+"637
 [v _valveExecuted `a ~T0 @X0 1 e ]
 [i _valveExecuted
 -> -> 0 `i `a
 ]
-"629
+"638
 [v _onHold `a ~T0 @X0 1 e ]
 [i _onHold
 -> -> 0 `i `a
 ]
-"630
+"639
 [v _dueValveChecked `a ~T0 @X0 1 e ]
 [i _dueValveChecked
 -> -> 0 `i `a
 ]
-"631
+"640
 [v _correctDate `a ~T0 @X0 1 e ]
 [i _correctDate
 -> -> 0 `i `a
 ]
-"632
+"641
 [v _phaseFailureDetected `a ~T0 @X0 1 e ]
 [i _phaseFailureDetected
 -> -> 0 `i `a
 ]
-"633
+"642
 [v _lowRTCBatteryDetected `a ~T0 @X0 1 e ]
 [i _lowRTCBatteryDetected
 -> -> 0 `i `a
 ]
-"634
+"643
 [v _rtcBatteryLevelChecked `a ~T0 @X0 1 e ]
 [i _rtcBatteryLevelChecked
 -> -> 0 `i `a
 ]
-"635
+"644
 [v _phaseFailureActionTaken `a ~T0 @X0 1 e ]
 [i _phaseFailureActionTaken
 -> -> 0 `i `a
 ]
-"636
+"645
 [v _filtrationEnabled `a ~T0 @X0 1 e ]
 [i _filtrationEnabled
 -> -> 0 `i `a
 ]
-"637
+"646
 [v _cmtiCmd `a ~T0 @X0 1 e ]
 [i _cmtiCmd
 -> -> 0 `i `a
 ]
-"638
+"647
 [v _DeviceBurnStatus `a ~T0 @X0 1 e ]
 [i _DeviceBurnStatus
 -> -> 0 `i `a
 ]
-"639
+"648
 [v _gsmSetToLocalTime `a ~T0 @X0 1 e ]
 [i _gsmSetToLocalTime
 -> -> 0 `i `a
 ]
-"640
+"649
 [v _cmdRceived `a ~T0 @X0 1 e ]
 [i _cmdRceived
 -> -> 0 `i `a
 ]
-"641
+"650
 [v _checkLoraConnection `a ~T0 @X0 1 e ]
 [i _checkLoraConnection
 -> -> 0 `i `a
 ]
-"642
+"651
 [v _LoraConnectionFailed `a ~T0 @X0 1 e ]
 [i _LoraConnectionFailed
 -> -> 0 `i `a
 ]
-"643
+"652
 [v _wetSensor `a ~T0 @X0 1 e ]
 [i _wetSensor
 -> -> 0 `i `a
 ]
-"644
+"653
 [v _fertigationDry `a ~T0 @X0 1 e ]
 [i _fertigationDry
 -> -> 0 `i `a
 ]
-"645
+"654
 [v _isLoraSlaveAlive `a ~T0 @X0 1 e ]
 [i _isLoraSlaveAlive
 -> -> 0 `i `a
 ]
-"646
+"655
 [v _checkWaterFlow `a ~T0 @X0 1 e ]
 [i _checkWaterFlow
 -> -> 0 `i `a
 ]
-"647
+"656
 [v _checkFertFlow `a ~T0 @X0 1 e ]
 [i _checkFertFlow
 -> -> 0 `i `a
 ]
-"648
+"657
 [v _isPulseOn `a ~T0 @X0 1 e ]
 [i _isPulseOn
 -> -> 0 `i `a
 ]
-"649
+"658
 [v _isOK `a ~T0 @X0 1 e ]
 [i _isOK
 -> -> 0 `i `a
 ]
-"650
+"659
 [v _isERROR `a ~T0 @X0 1 e ]
 [i _isERROR
 -> -> 0 `i `a
 ]
-"651
-[v _isErrorActionTaken `a ~T0 @X0 1 e ]
-[i _isErrorActionTaken
+"660
+[v _isErrorActionNeeded `a ~T0 @X0 1 e ]
+[i _isErrorActionNeeded
 -> -> 0 `i `a
 ]
-"652
+"661
 [v _isNotification `a ~T0 @X0 1 e ]
 [i _isNotification
 -> -> 0 `i `a
 ]
-"653
+"662
 [v _isValveConfigured `a ~T0 @X0 1 e ]
 [i _isValveConfigured
 -> -> 0 `i `a
 ]
-"654
+"663
 [v _msgStart `a ~T0 @X0 1 e ]
 [i _msgStart
 -> -> 0 `i `a
 ]
-"655
+"664
 [v _atcmdStart `a ~T0 @X0 1 e ]
 [i _atcmdStart
 -> -> 0 `i `a
 ]
-"657
+"666
 [v _lowBattery `a ~T0 @X0 1 e ]
 [i _lowBattery
 -> -> 0 `i `a
 ]
-"658
+"667
 [v _resetSlave `a ~T0 @X0 1 e ]
 [i _resetSlave
 -> -> 0 `i `a
 ]
-"659
+"668
 [v _deviceIDFalg `a ~T0 @X0 1 e ]
 [i _deviceIDFalg
+-> -> 0 `i `a
+]
+"669
+[v _restartcmd `a ~T0 @X0 1 e ]
+[i _restartcmd
+-> -> 0 `i `a
+]
+"670
+[v _lastChar `a ~T0 @X0 1 e ]
+[i _lastChar
 -> -> 0 `i `a
 ]
 "23 i2c_RTC_DS1307.c

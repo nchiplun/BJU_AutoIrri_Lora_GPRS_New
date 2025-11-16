@@ -348,6 +348,7 @@ unsigned char injector4CycleCnt = CLEAR;
 unsigned char loraAliveCount = CLEAR;
 unsigned char loraAliveCountCheck = CLEAR;
 unsigned char loraAttempt = CLEAR;
+unsigned char wait = CLEAR;
 unsigned char timer3Count = CLEAR; // To store timer 0 overflow count
 unsigned char rxCharacter = CLEAR; // To store received 1 byte character from GSM through RX pin
 unsigned char msgIndex = CLEAR; // To point received character position in Message
@@ -382,6 +383,7 @@ unsigned char filtrationOnTime = CLEAR; // To store filtration OnTime in minutes
 unsigned char dryRunCheckCount = CLEAR; // To store dry run check count
 unsigned char currentFieldNo = CLEAR; // To store running field no.
 unsigned char pulses = CLEAR; // To store no. of pulses for water /fertigation flow sensor
+unsigned char lastCharPos = CLEAR;
 char fieldByte[3] = ""; //To store field no.
 char temporaryBytesArray[26] = ""; // To store 26 byte buffer.
 char deviceId[] = "a0d1d8668dd8"; // To store 12 byte user device Id.
@@ -442,7 +444,7 @@ const char active[7] = "ACTIVE"; // To ACTIVATE filtration valve
 const char dactive[8] = "DACTIVE"; // To De-Activate filtration valve
 const char hold[5] = "HOLD"; // To hold irrigation valve settings
 const char extract[8] = "EXTRACT"; // To extract diagnostic data
-const char ok[3] = "ok"; // Acknowledge from GSM	
+const char ok[3] = "OK"; // Acknowledge OK from GSM
 const char time[5] = "TIME"; // To get current time from RTC
 const char feed[5] = "FEED"; // To Set current time into RTC
 const char fdata[6] = "FDATA"; // To get filtration cycle data
@@ -453,8 +455,16 @@ const char setct[6] = "CTSET"; // To set motor load condition through diagnostic
 const char secret[12] = "12345678912"; //Secret code to fetch unique factory password
 const char getct[4] = "CTV"; // get ct values
 const char getfreq[5] = "FREQ"; // get FREQ values
-const char countryCode[4] = "+91"; //Country code for GSM
-const char mqttConnect[19] = "+CMQTTCONNECT: 0,0"; // successful MQTT connect
+const char csq[6] = "CSQ: "; // signal strength
+const char mqttConnect[15] = "+CMQTTCONNECT:"; // successful MQTT connect
+const char mqttLost[16] = "+CMQTTCONNLOST:";
+const char gsmError[6] = "+CGEV";
+const char gsmRestart[10] = "*ATREADY:";
+const char cclk[7] = "+CCLK:";
+const char mqttStart[13] = "+CMQTTSTART:";
+const char mqttSub[11] = "+CMQTTSUB:";
+const char netRestart[8] = "PB DONE";
+const char pdnRestart[8] = "PDN ACT";
 /***** SMS prototype definition#end ***************************/
 
 /***** LORA prototype definition#start *************************/
@@ -469,7 +479,6 @@ const char alive[6] = "ALIVE";
 const char sensor[7] = "SENSOR";
 const char lowbattery[16] = "LOWBATTERYSLAVE";
 const char resetslave[11] = "RESETSLAVE";
-const char cmqttError[14] = "CMQTTCONNLOST";
 /***** LORA prototype definition#end ***************************/
 
 //const char deviceId[13] = "a0d1d8668dd8"; //4269C02CC071
@@ -648,7 +657,7 @@ _Bool checkFertFlow = false;                    // To indicate fertigation flow 
 _Bool isPulseOn = false;                        // To indicate pulse is on.
 _Bool isOK = false;                             // To indicate OK Response of AT commands.
 _Bool isERROR = false;                          // To indicate ERROR Response of AT commands.
-_Bool isErrorActionTaken = false;               // To indicate Action on ERROR Response of AT commands.
+_Bool isErrorActionNeeded = false;               // To indicate Action on ERROR Response of AT commands.
 _Bool isNotification = false;                   // To indicate notification received from MQTT Broker
 _Bool isValveConfigured = false;                // To indicate at-least one is configured
 _Bool msgStart = false;                         // To indicate msg started
@@ -657,6 +666,8 @@ _Bool atcmdStart = false;                       // To indicate AT cmd started
 _Bool lowBattery = false;                       // To indicate low battery for slave
 _Bool resetSlave = false;                       // To indicate slave is reset
 _Bool deviceIDFalg = false;                    // To indicate DeviceID is set for reset action
+_Bool restartcmd = false;                       // To indicate gsm restart AT cmnds initiated to ignore cgev response
+_Bool lastChar = false;                         //To indicate last character received on RX pin
 /************* BOOLeans definition#end ***********************************/
 /***************************** Global variables definition#end ***********************/
 

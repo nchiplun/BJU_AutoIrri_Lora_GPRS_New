@@ -36,6 +36,203 @@ This function is called to transmit Byte data to GSM
 The purpose of this function is to transmit Data loaded into Transmit buffer (TXREG) until Transmit flag (TXIF) is pulled down
 
  **************************************************************************************************************************/
+void checkResponse(unsigned char type) {
+    unsigned char p;
+    if (type == 0 || type == 1 ) {
+        if (strstr(gsmResponse, error) != NULL ) {
+            isOK = false;
+            isERROR = true;
+            if (type == 1) {
+                isErrorActionNeeded = true;
+            }
+            //isErrorActionNeeded = true;
+            //gsmResponse[msgIndex] = '\0';
+            //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+            atcmdStart = false;
+        } else if (strstr(gsmResponse, mqttLost) != NULL ) {
+            isOK = false;
+            isERROR = true;
+            isErrorActionNeeded = true;
+            //gsmResponse[msgIndex] = '\0';
+            //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+            atcmdStart = false;
+        } else if (strstr(gsmResponse, gsmRestart) != NULL ) {
+            isOK = false;
+            isERROR = true;
+            isErrorActionNeeded = true;
+            //gsmResponse[msgIndex] = '\0';
+            //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+            atcmdStart = false;
+        } else if ((strstr(gsmResponse, gsmError) != NULL) && type == 0) {
+            isOK = false;
+            isERROR = true;
+            isErrorActionNeeded = true;
+            //gsmResponse[msgIndex] = '\0';
+            //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+            atcmdStart = false;
+        } else if ((strstr(gsmResponse, pdnRestart) != NULL) && type == 0) {
+            isOK = false;
+            isERROR = true;
+            isErrorActionNeeded = true;
+            //gsmResponse[msgIndex] = '\0';
+            //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+            atcmdStart = false;
+        } else if ((strstr(gsmResponse, netRestart) != NULL) && type == 0) {
+            isOK = false;
+            isERROR = true;
+            isErrorActionNeeded = true;
+            //gsmResponse[msgIndex] = '\0';
+            //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+            atcmdStart = false;
+        } else if (strstr(gsmResponse, ok) != NULL ) {
+            isOK = true;
+            isERROR = false;
+            isErrorActionNeeded = false;
+            //gsmResponse[msgIndex] = '\0';
+            //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+            atcmdStart = false;
+        } else {
+            isOK = false;
+            isERROR = true;
+            isErrorActionNeeded = true;
+            atcmdStart = false;
+        }
+    } else if (type == 2) {
+        if (strstr(gsmResponse, error) != NULL ) {
+            isOK = false;
+            isERROR = true;
+            isErrorActionNeeded = true;
+            //gsmResponse[msgIndex] = '\0';
+            //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+            atcmdStart = false;
+        } else if (strstr(gsmResponse, mqttLost) != NULL ) {
+            isOK = false;
+            isERROR = true;
+            isErrorActionNeeded = true;
+            //gsmResponse[msgIndex] = '\0';
+            //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+            atcmdStart = false;
+        } else if (strstr(gsmResponse, mqttConnect) != NULL ) {
+            p = (unsigned char)((strstr(gsmResponse, mqttConnect)) - gsmResponse);
+            if (gsmResponse[p+15] == '0' && gsmResponse[p+17] == '0' ) { //+CMQTTCONNECT: 0,0
+                isOK = true;
+                isERROR = false;
+                //gsmResponse[msgIndex] = '\0';
+                //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+                atcmdStart = false;
+            } else {
+                isOK = false;
+                isERROR = true;
+                isErrorActionNeeded = true;
+                //gsmResponse[msgIndex] = '\0';
+                //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+                atcmdStart = false;
+            }
+        } else if (strstr(gsmResponse, mqttStart) != NULL ) {
+            p = (unsigned char)((strstr(gsmResponse, mqttStart)) - gsmResponse);
+            if (gsmResponse[p+13] == '0' ) { //+CMQTTSTART: 0
+                isOK = true;
+                isERROR = false;
+                //gsmResponse[msgIndex] = '\0';
+                //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+                atcmdStart = false;
+            } else {
+                isOK = false;
+                isERROR = true;
+                isErrorActionNeeded = true;
+                //gsmResponse[msgIndex] = '\0';
+                //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+                atcmdStart = false;   
+            }
+        } else if (strstr(gsmResponse, mqttSub) != NULL) {
+            p = (unsigned char)((strstr(gsmResponse, mqttSub)) - gsmResponse);
+            if (gsmResponse[p+11] == '0' && gsmResponse[p+13] == '0' ) { //+CMQTTSUB: 0,0
+                isOK = true;
+                isERROR = false;
+                //gsmResponse[msgIndex] = '\0';
+                //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+                atcmdStart = false;
+            } else {
+                isOK = false;
+                isERROR = true;
+                isErrorActionNeeded = true;
+                //gsmResponse[msgIndex] = '\0';
+                //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+                atcmdStart = false;   
+            }
+        } else if (strstr(gsmResponse, gsmRestart) != NULL ) {
+            isOK = false;
+            isERROR = true;
+            isErrorActionNeeded = true;
+            //gsmResponse[msgIndex] = '\0';
+            //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+            atcmdStart = false;
+        } else if (strstr(gsmResponse, gsmError) != NULL) {
+            isOK = false;
+            isERROR = true;
+            isErrorActionNeeded = true;
+            //gsmResponse[msgIndex] = '\0';
+            //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+            atcmdStart = false;
+        } else if (strstr(gsmResponse, pdnRestart) != NULL ) {
+            isOK = false;
+            isERROR = true;
+            isErrorActionNeeded = true;
+            //gsmResponse[msgIndex] = '\0';
+            //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+            atcmdStart = false;
+        } else if (strstr(gsmResponse, netRestart) != NULL ) {
+            isOK = false;
+            isERROR = true;
+            isErrorActionNeeded = true;
+            //gsmResponse[msgIndex] = '\0';
+            //msgIndex = 1; // Reset message storage index to first character to start reading for next received byte of cmd
+            atcmdStart = false;
+        }
+    }
+}
+
+/*************************************************************************************************************************
+
+This function is called to send an MQTT ping command to the GSM module (SIM7600)
+The purpose of this function is to transmit the AT command "AT+CMQTTPING=0" via UART and monitor the response buffer
+for a positive acknowledgment "+CMQTTPING: 0,0", indicating successful ping, or "+CMQTTCONNLOST: 0,1" for connection loss
+
+**************************************************************************************************************************/
+void checkPingResponse(void) {
+    
+    isOK = false;
+    isERROR = false;
+    wait = 0;
+    clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+    transmitStringToGSM("AT+CMQTTPING=0\r"); // Echo off command
+    do {
+        __delay_ms(1000);
+    }while (!lastChar && wait++ < 3);
+    if (wait != 3) {
+        wait = 0;
+        do {
+            __delay_ms(500);
+        } while (lastCharPos != msgIndex && wait++ < 3);
+    }
+    if (strstr(gsmResponse, "+CMQTTPING: 0,0")) {
+        isErrorActionNeeded = false;
+        isOK = true;
+        atcmdStart = false;
+        restartcmd = false;
+    } else if (strstr(gsmResponse, "+CMQTTCONNLOST: 0,1")) {
+        isErrorActionNeeded = true;
+        atcmdStart = false;
+        restartcmd = false;
+    }
+}
+
+/*************************************************************************************************************************
+
+This function is called to transmit Byte data to GSM
+The purpose of this function is to transmit Data loaded into Transmit buffer (TXREG) until Transmit flag (TXIF) is pulled down
+
+ **************************************************************************************************************************/
 // Transmit data through TX pin
 void txByte(unsigned char serialData) {
     TX3REG = serialData; // Load Transmit Register 
@@ -82,144 +279,207 @@ void publishNotification(const char *alert, const char *message, _Bool isnum) {
     unsigned int stringLength;
     //publish operations:
     //Set topic
- 
-    transmitStringToGSM("\r\nAT+CMQTTTOPIC=0,");
-    stringLength = strlen((const char *)deviceId) + 13;
-    clearTempBytesString();
-    sprintf(temporaryBytesArray, "%d", stringLength);
-    temp = strlen((const char *)temporaryBytesArray);
-    transmitNumberToGSM(temporaryBytesArray,temp);
-    transmitStringToGSM("\r");
-    __delay_ms(500);
-
+    clearGsmResponse();
+    if (!isErrorActionNeeded) {
+        transmitStringToGSM("AT+CMQTTTOPIC=0,");
+        stringLength = strlen((const char *)deviceId) + 13;
+        clearTempBytesString();
+        sprintf(temporaryBytesArray, "%d", stringLength);
+        temp = strlen((const char *)temporaryBytesArray);
+        transmitNumberToGSM(temporaryBytesArray,temp);
+        transmitStringToGSM("\r");
+        __delay_ms(500);
+    }
     //Publish
-
-    msgIndex = 1;
-    controllerCommandExecuted = false;
-    loraAttempt = 0;
-    isOK = false;
-    isERROR = false;
-    do {
-        transmitStringToGSM(deviceId);
-        transmitStringToGSM("/notification");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
-    if (isOK) {
-    } else if (isERROR) {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("ERROR In GPRS ", 2);
-        lcdWriteStringAtCenter("Connection", 3);
-#endif
-        __delay_ms(2000);
-    } else {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("No Response ", 2);
-        lcdWriteStringAtCenter("From GPRS", 3);
-#endif
-        __delay_ms(2000);
-    }
-    
-    //Set payload
-
-    transmitStringToGSM("\r\nAT+CMQTTPAYLOAD=0,");
-    //transmitStringToGSM(number);
-    if (strncmp(alert,"null",4) == 0) {
-        stringLength = strlen((const char *)message);
-    } else {
-        stringLength = 24 + strlen((const char *)message) + strlen((const char *)alert);
-        if (isnum) {
-            stringLength = stringLength + strlen((const char *)fieldByte);
-        }
-    }
-    clearTempBytesString();
-    sprintf(temporaryBytesArray, "%d", stringLength);
-    temp = strlen((const char *)temporaryBytesArray);
-    transmitNumberToGSM(temporaryBytesArray,temp);
-    transmitStringToGSM("\r");
-    __delay_ms(500);
-        
-    //Publish message
- 
-    msgIndex = 1;
-    controllerCommandExecuted = false;
-    loraAttempt = 0;
-    isOK = false;
-    isERROR = false;
-    do {
-        if (strncmp(alert,"null",4) == 0) {
-            transmitStringToGSM(message);
-        } else {
-            transmitStringToGSM("{\"title\": \"");
-            transmitStringToGSM(alert);
-            transmitStringToGSM("\",\"body\": \""); 
-            transmitStringToGSM(message);
-            if (isnum) {
-                temp = strlen((const char *)fieldByte);
-                transmitNumberToGSM(fieldByte,temp);
+    if (!isErrorActionNeeded) {
+        //Publish
+        loraAttempt = 0;
+        isOK = false;
+        isERROR = false;
+        do {
+            wait = 0;
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+            transmitStringToGSM(deviceId);
+            transmitStringToGSM("/notification");
+            do {
+                __delay_ms(1000);
+            }while (!lastChar && wait++ < 3);
+            if (wait != 3) {
+                wait = 0;
+                do {
+                    __delay_ms(500);
+                } while (lastCharPos != msgIndex && wait++ < 3);
             }
-            transmitStringToGSM("\"}");
+            checkResponse(0);
+        } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
+
+        if (isOK) {
+        } else if (isERROR) {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("ERROR In GPRS ", 2);
+            lcdWriteStringAtCenter("Connection", 3);
+    #endif
+            __delay_ms(2000);
+        } else {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("No Response ", 2);
+            lcdWriteStringAtCenter("From GPRS", 3);
+    #endif
+            __delay_ms(2000);
         }
-        //transmitStringToGSM("\r\n");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
-    
-    if (isOK) {
-    } else if (isERROR) {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("ERROR In GPRS ", 2);
-        lcdWriteStringAtCenter("Connection", 3);
-#endif
-        __delay_ms(2000);
-    } else {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("No Response ", 2);
-        lcdWriteStringAtCenter("From GPRS", 3);
-#endif
-        __delay_ms(2000);
     }
- 
-    msgIndex = 1;
-    controllerCommandExecuted = false;
-    loraAttempt = 0;
-    isOK = false;
-    isERROR = false;
-    do {
-        transmitStringToGSM("\r\nAT+CMQTTPUB=0,1,60\r\n");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
-    
-    if (isOK) {
-    } else if (isERROR) {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("ERROR In GPRS ", 2);
-        lcdWriteStringAtCenter("Connection", 3);
-#endif
-        __delay_ms(2000);
-    } else {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("No Response ", 2);
-        lcdWriteStringAtCenter("From GPRS", 3);
-#endif
-        __delay_ms(2000);
-    }    
+    //Set payload
+    clearGsmResponse();
+    if (!isErrorActionNeeded) {
+        transmitStringToGSM("AT+CMQTTPAYLOAD=0,");
+        if (strncmp(alert,"null",4) == 0) {
+            stringLength = strlen((const char *)message);
+        } else {
+            stringLength = 24 + strlen((const char *)message) + strlen((const char *)alert);
+            if (isnum) {
+                stringLength = stringLength + strlen((const char *)fieldByte);
+            }
+        }
+        clearTempBytesString();
+        sprintf(temporaryBytesArray, "%d", stringLength);
+        temp = strlen((const char *)temporaryBytesArray);
+        transmitNumberToGSM(temporaryBytesArray,temp);
+        transmitStringToGSM("\r");
+        __delay_ms(500);
+    }
+    if (!isErrorActionNeeded) {
+        //Publish message
+        msgIndex = CLEAR;
+        loraAttempt = 0;
+        isOK = false;
+        isERROR = false;
+        do {
+            wait = 0;
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+            if (strncmp(alert,"null",4) == 0) {
+                transmitStringToGSM(message);
+            } else {
+                transmitStringToGSM("{\"title\": \"");
+                transmitStringToGSM(alert);
+                transmitStringToGSM("\",\"body\": \""); 
+                transmitStringToGSM(message);
+                if (isnum) {
+                    temp = strlen((const char *)fieldByte);
+                    transmitNumberToGSM(fieldByte,temp);
+                }
+                transmitStringToGSM("\"}");
+            }
+            do {
+                __delay_ms(1000);
+            }while (!lastChar && wait++ < 3);
+            if (wait != 3) {
+                wait = 0;
+                do {
+                    __delay_ms(500);
+                } while (lastCharPos != msgIndex && wait++ < 3);
+            }
+            checkResponse(0);
+        } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
+        /*
+        do {
+            clearGsmResponse();
+            if (strncmp(alert,"null",4) == 0) {
+                transmitStringToGSM(message);
+            } else {
+                transmitStringToGSM("{\"title\": \"");
+                transmitStringToGSM(alert);
+                transmitStringToGSM("\",\"body\": \""); 
+                transmitStringToGSM(message);
+                if (isnum) {
+                    temp = strlen((const char *)fieldByte);
+                    transmitNumberToGSM(fieldByte,temp);
+                }
+                transmitStringToGSM("\"}");
+            }
+            //transmitStringToGSM("\r\n");
+            __delay_ms(1000);
+            loraAttempt++;
+        } while (loraAttempt < 3 && !isOK);
+         */
+
+        if (isOK) {
+        } else if (isERROR) {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("ERROR In GPRS ", 2);
+            lcdWriteStringAtCenter("Connection", 3);
+    #endif
+            __delay_ms(2000);
+        } else {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("No Response ", 2);
+            lcdWriteStringAtCenter("From GPRS", 3);
+    #endif
+            __delay_ms(2000);
+        }
+    }
+    clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+    if (!isErrorActionNeeded) {
+        loraAttempt = 0;
+        isOK = false;
+        isERROR = false;
+        do {
+            wait = 0;
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+            transmitStringToGSM("AT+CMQTTPUB=0,1,1\r");
+            do {
+                __delay_ms(1000);
+            }while (!lastChar && wait++ < 3);
+            if (wait != 3) {
+                wait = 0;
+                do {
+                    __delay_ms(500);
+                } while (lastCharPos != msgIndex && wait++ < 3);
+            }
+            checkResponse(0);
+        } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
+        /*
+        do {
+            clearGsmResponse();
+            transmitStringToGSM("\r\nAT+CMQTTPUB=0,1,60\r\n");
+            __delay_ms(1000);
+            loraAttempt++;
+        } while (loraAttempt < 3 && !isOK);
+         */ 
+
+        if (isOK) {
+        } else if (isERROR) {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("ERROR In GPRS ", 2);
+            lcdWriteStringAtCenter("Connection", 3);
+    #endif
+            __delay_ms(2000);
+        } else {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("No Response ", 2);
+            lcdWriteStringAtCenter("From GPRS", 3);
+    #endif
+            __delay_ms(2000);
+        } 
+    }
+    clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
 }
 
 /*************************************************************************************************************************
@@ -233,130 +493,195 @@ void publishResponse(const char *message, _Bool isnum) {
     strcpyCustom(tempBytesArray, message);
     //publish operations:
     //Set topic
-    transmitStringToGSM("\r\nAT+CMQTTTOPIC=0,");
-    stringLength = strlen((const char *)deviceId) + 9;
-    clearTempBytesString();
-    sprintf(temporaryBytesArray, "%d", stringLength);
-    temp = strlen((const char *)temporaryBytesArray);
-    transmitNumberToGSM(temporaryBytesArray,temp);
-    transmitStringToGSM("\r");
-    __delay_ms(500);
-
-    //Publish
-
-    msgIndex = 1;
-    controllerCommandExecuted = false;
-    loraAttempt = 0;
-    isOK = false;
-    isERROR = false;
-    do {
-        transmitStringToGSM(deviceId);
-        transmitStringToGSM("/response");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
-    
-    if (isOK) {
-    } else if (isERROR) {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("ERROR In GPRS ", 2);
-        lcdWriteStringAtCenter("Connection", 3);
-#endif
-        __delay_ms(2000);
-    } else {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("No Response ", 2);
-        lcdWriteStringAtCenter("From GPRS", 3);
-#endif
-        __delay_ms(2000);
+    clearGsmResponse();
+    if (!isErrorActionNeeded) {
+        transmitStringToGSM("AT+CMQTTTOPIC=0,");
+        stringLength = strlen((const char *)deviceId) + 9;
+        clearTempBytesString();
+        sprintf(temporaryBytesArray, "%d", stringLength);
+        temp = strlen((const char *)temporaryBytesArray);
+        transmitNumberToGSM(temporaryBytesArray,temp);
+        transmitStringToGSM("\r");
+        __delay_ms(500);
     }
-    
-    //Set payload
- 
-    transmitStringToGSM("\r\nAT+CMQTTPAYLOAD=0,");
-    stringLength = strlen(tempBytesArray);
-    clearTempBytesString();
-    sprintf(temporaryBytesArray, "%d", stringLength);
-    temp = strlen((const char *)temporaryBytesArray);
-    transmitNumberToGSM(temporaryBytesArray,temp);
-    transmitStringToGSM("\r");
-    __delay_ms(500);
-    
-    //Publish message
- 
-    msgIndex = 1;
-    controllerCommandExecuted = false;
-    loraAttempt = 0;
-    isOK = false;
-    isERROR = false;
-    do {
-        if (isnum) {
-            transmitStringToGSM(tempBytesArray);
-            temp = strlen((const char *)fieldByte);
-            transmitNumberToGSM(fieldByte,temp);
+    if (!isErrorActionNeeded) {
+        //Publish
+        loraAttempt = 0;
+        isOK = false;
+        isERROR = false;
+        do {
+            wait = 0;
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+            transmitStringToGSM(deviceId);
+            transmitStringToGSM("/response");
+            do {
+                __delay_ms(1000);
+            }while (!lastChar && wait++ < 3);
+            if (wait != 3) {
+                wait = 0;
+                do {
+                    __delay_ms(500);
+                } while (lastCharPos != msgIndex && wait++ < 3);
+            }
+            checkResponse(0);
+        } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
+        /*
+        do {
+            clearGsmResponse();
+            transmitStringToGSM(deviceId);
+            transmitStringToGSM("/response");
+            __delay_ms(1000);
+            loraAttempt++;
+        } while (loraAttempt < 3 && !isOK);
+         */ 
+
+        if (isOK) {
+        } else if (isERROR) {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("ERROR In GPRS ", 2);
+            lcdWriteStringAtCenter("Connection", 3);
+    #endif
+            __delay_ms(2000);
         } else {
-            transmitStringToGSM(tempBytesArray);
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("No Response ", 2);
+            lcdWriteStringAtCenter("From GPRS", 3);
+    #endif
+            __delay_ms(2000);
         }
-        //transmitStringToGSM("\r\n");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
-    
-    if (isOK) {
-    } else if (isERROR) {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("ERROR In GPRS ", 2);
-        lcdWriteStringAtCenter("Connection", 3);
-#endif
-        __delay_ms(2000);
-    } else {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("No Response ", 2);
-        lcdWriteStringAtCenter("From GPRS", 3);
-#endif
-        __delay_ms(2000);
     }
-    
-    msgIndex = 1;
-    controllerCommandExecuted = false;
-    loraAttempt = 0;
-    isOK = false;
-    isERROR = false;
-    do {
-        transmitStringToGSM("\r\nAT+CMQTTPUB=0,1,60\r\n");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
-    
-    if (isOK) {
-    } else if (isERROR) {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("ERROR In GPRS ", 2);
-        lcdWriteStringAtCenter("Connection", 3);
-#endif
-        __delay_ms(2000);
-    } else {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("No Response ", 2);
-        lcdWriteStringAtCenter("From GPRS", 3);
-#endif
-        __delay_ms(2000);
+    clearGsmResponse();
+    if (!isErrorActionNeeded) {
+        //Set payload
+        transmitStringToGSM("AT+CMQTTPAYLOAD=0,");
+        stringLength = strlen(tempBytesArray);
+        clearTempBytesString();
+        sprintf(temporaryBytesArray, "%d", stringLength);
+        temp = strlen((const char *)temporaryBytesArray);
+        transmitNumberToGSM(temporaryBytesArray,temp);
+        transmitStringToGSM("\r");
+        __delay_ms(500);
     }
+    if (!isErrorActionNeeded) {    
+        //Publish message
+        loraAttempt = 0;
+        isOK = false;
+        isERROR = false;
+        do {
+            wait = 0;
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+            if (isnum) {
+                transmitStringToGSM(tempBytesArray);
+                temp = strlen((const char *)fieldByte);
+                transmitNumberToGSM(fieldByte,temp);
+            } else {
+                transmitStringToGSM(tempBytesArray);
+            }
+            do {
+                __delay_ms(1000);
+            }while (!lastChar && wait++ < 3);
+            if (wait != 3) {
+                wait = 0;
+                do {
+                    __delay_ms(500);
+                } while (lastCharPos != msgIndex && wait++ < 3);
+            }
+            checkResponse(0);
+        } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
+        /*
+        do {
+            clearGsmResponse();
+            if (isnum) {
+                transmitStringToGSM(tempBytesArray);
+                temp = strlen((const char *)fieldByte);
+                transmitNumberToGSM(fieldByte,temp);
+            } else {
+                transmitStringToGSM(tempBytesArray);
+            }
+            //transmitStringToGSM("\r\n");
+            __delay_ms(1000);
+            loraAttempt++;
+        } while (loraAttempt < 3 && !isOK);
+         */ 
+
+        if (isOK) {
+        } else if (isERROR) {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("ERROR In GPRS ", 2);
+            lcdWriteStringAtCenter("Connection", 3);
+    #endif
+            __delay_ms(2000);
+        } else {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("No Response ", 2);
+            lcdWriteStringAtCenter("From GPRS", 3);
+    #endif
+            __delay_ms(2000);
+        }
+    }
+    clearGsmResponse();
+    if (!isErrorActionNeeded) {
+        loraAttempt = 0;
+        isOK = false;
+        isERROR = false;
+        do {
+            wait = 0;
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+            transmitStringToGSM("AT+CMQTTPUB=0,1,1\r");
+            do {
+                __delay_ms(1000);
+            }while (!lastChar && wait++ < 3);
+            if (wait != 3) {
+                wait = 0;
+                do {
+                    __delay_ms(500);
+                } while (lastCharPos != msgIndex && wait++ < 3);
+            }
+            checkResponse(0);
+        } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
+        /*
+        do {
+            clearGsmResponse();
+            transmitStringToGSM("\r\nAT+CMQTTPUB=0,1,60\r\n");
+            __delay_ms(1000);
+            loraAttempt++;
+        } while (loraAttempt < 3 && !isOK);
+         */
+
+        if (isOK) {
+        } else if (isERROR) {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("ERROR In GPRS ", 2);
+            lcdWriteStringAtCenter("Connection", 3);
+    #endif
+            __delay_ms(2000);
+        } else {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("No Response ", 2);
+            lcdWriteStringAtCenter("From GPRS", 3);
+    #endif
+            __delay_ms(2000);
+        }
+    }
+    clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
 }
 
 /*************************************************************************************************************************
@@ -366,7 +691,6 @@ The purpose of this function is to transmit AT commands which enables Receive mo
 
 **************************************************************************************************************************/
 void configureGPRS(void) {
-    unsigned int stringLength = 0;
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
@@ -378,26 +702,25 @@ void configureGPRS(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("SENDING ", 2);
     lcdWriteStringAtCenter("AT", 3);
 #endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
+    msgIndex = CLEAR;
     loraAttempt = 0;
     isOK = false;
     //isERROR = false;
     do {
         transmitStringToGSM("ATE0\r\n"); // Echo off command
         __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
     
     if (isOK) {
     } else if (isERROR) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("ERROR In GPRS ", 2);
         lcdWriteStringAtCenter("Connection", 3);
 #endif
@@ -406,6 +729,7 @@ void configureGPRS(void) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("No Response ", 2);
         lcdWriteStringAtCenter("From GPRS", 3);
 #endif
@@ -415,26 +739,25 @@ void configureGPRS(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("SENDING ", 2);
     lcdWriteStringAtCenter("AT+CSQ", 3);
 #endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
+    msgIndex = CLEAR;
     loraAttempt = 0;
     isOK = false;
     //isERROR = false;
     do {
         transmitStringToGSM("AT+CSQ\r\n");
         __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
     
     if (isOK) {
     } else if (isERROR) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("ERROR In GPRS ", 2);
         lcdWriteStringAtCenter("Connection", 3);
 #endif
@@ -443,6 +766,7 @@ void configureGPRS(void) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("No Response ", 2);
         lcdWriteStringAtCenter("From GPRS", 3);
 #endif
@@ -452,26 +776,25 @@ void configureGPRS(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("SENDING ", 2);
     lcdWriteStringAtCenter("AT+CREG?", 3);
 #endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
+    msgIndex = CLEAR;
     loraAttempt = 0;
     isOK = false;
     //isERROR = false;
     do {
         transmitStringToGSM("AT+CREG?\r\n");
         __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
     
     if (isOK) {
     } else if (isERROR) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("ERROR In GPRS ", 2);
         lcdWriteStringAtCenter("Connection", 3);
 #endif
@@ -480,6 +803,7 @@ void configureGPRS(void) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("No Response ", 2);
         lcdWriteStringAtCenter("From GPRS", 3);
 #endif
@@ -489,26 +813,25 @@ void configureGPRS(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("SENDING ", 2);
     lcdWriteStringAtCenter("AT+CGREG?", 3);
 #endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
+    msgIndex = CLEAR;
     loraAttempt = 0;
     isOK = false;
     //isERROR = false;
     do {
         transmitStringToGSM("AT+CGREG?\r\n");
         __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
     
     if (isOK) {
     } else if (isERROR) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("ERROR In GPRS ", 2);
         lcdWriteStringAtCenter("Connection", 3);
 #endif
@@ -517,6 +840,7 @@ void configureGPRS(void) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("No Response ", 2);
         lcdWriteStringAtCenter("From GPRS", 3);
 #endif
@@ -527,26 +851,25 @@ void configureGPRS(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("SENDING ", 2);
     lcdWriteStringAtCenter("AT+CGSOCKCONT=1...", 3);
 #endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
+    msgIndex = CLEAR;
     loraAttempt = 0;
     isOK = false;
     //isERROR = false;
     do {
         transmitStringToGSM("AT+CGSOCKCONT=1,\"IP\",\"CMNET\"\r\n");
         __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
     
     if (isOK) {
     } else if (isERROR) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("ERROR In GPRS ", 2);
         lcdWriteStringAtCenter("Connection", 3);
 #endif
@@ -555,6 +878,7 @@ void configureGPRS(void) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("No Response ", 2);
         lcdWriteStringAtCenter("From GPRS", 3);
 #endif
@@ -564,26 +888,25 @@ void configureGPRS(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("SENDING ", 2);
     lcdWriteStringAtCenter("AT+CGPADDR", 3);
 #endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
+    msgIndex = CLEAR;
     loraAttempt = 0;
     isOK = false;
     //isERROR = false;
     do {
         transmitStringToGSM("AT+CGPADDR\r\n");
         __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
     
     if (isOK) {
     } else if (isERROR) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("ERROR In GPRS ", 2);
         lcdWriteStringAtCenter("Connection", 3);
 #endif
@@ -592,6 +915,7 @@ void configureGPRS(void) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("No Response ", 2);
         lcdWriteStringAtCenter("From GPRS", 3);
 #endif
@@ -602,6 +926,7 @@ void configureGPRS(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("GPRS Enabled", 2);   
 #endif
 }
@@ -619,6 +944,7 @@ void configureMQTT(void) {
     lcdClearLine(2);
     lcdClearLine(3);
     lcdClearLine(4);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("Enabling", 2);
     lcdWriteStringAtCenter("MQTT Service", 3);
 #endif    
@@ -626,26 +952,35 @@ void configureMQTT(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("SENDING ", 2);
     lcdWriteStringAtCenter("AT", 3);
 #endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
     loraAttempt = 0;
     isOK = false;
-    //isERROR = false;
+    isERROR = false;
     do {
-        transmitStringToGSM("ATE0\r\n"); // Echo off command
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
-    
+        wait = 0;
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+        transmitStringToGSM("ATE0\r"); // Echo off command
+        do {
+            __delay_ms(1000);
+        }while (!lastChar && wait++ < 3);
+        if (wait != 3) {
+            wait = 0;
+            do {
+                __delay_ms(500);
+            } while (lastCharPos != msgIndex && wait++ < 3);
+        }
+        checkResponse(0);
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
     if (isOK) {
     } else if (isERROR) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("ERROR In MQTT ", 2);
         lcdWriteStringAtCenter("Connection", 3);
 #endif
@@ -654,6 +989,7 @@ void configureMQTT(void) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("No Response ", 2);
         lcdWriteStringAtCenter("From MQTT", 3);
 #endif
@@ -664,26 +1000,36 @@ void configureMQTT(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("SENDING ", 2);
     lcdWriteStringAtCenter("AT+CNMP=38", 3);
 #endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
     loraAttempt = 0;
     isOK = false;
-    //isERROR = false;
+    isERROR = false;
     do {
-        transmitStringToGSM("AT+CNMP=38\r\n");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
+        wait = 0;
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+        transmitStringToGSM("AT+CNMP=38\r");
+        do {
+            __delay_ms(1000);
+        }while (!lastChar && wait++ < 3);
+        if (wait != 3) {
+            wait = 0;
+            do {
+                __delay_ms(500);
+            } while (lastCharPos != msgIndex && wait++ < 3);
+        }
+        checkResponse(0);
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
     
     if (isOK) {
     } else if (isERROR) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("ERROR In MQTT ", 2);
         lcdWriteStringAtCenter("Connection", 3);
 #endif
@@ -692,6 +1038,7 @@ void configureMQTT(void) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("No Response ", 2);
         lcdWriteStringAtCenter("From MQTT", 3);
 #endif
@@ -702,26 +1049,36 @@ void configureMQTT(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("SENDING ", 2);
     lcdWriteStringAtCenter("AT+CMQTTSTART", 3);
 #endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
     loraAttempt = 0;
     isOK = false;
-    //isERROR = false;
+    isERROR = false;
     do {
-        transmitStringToGSM("AT+CMQTTSTART\r\n");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
+        wait = 0;
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+        transmitStringToGSM("AT+CMQTTSTART\r");
+        do {
+            __delay_ms(1000);
+        }while (!lastChar && wait++ < 3);
+        if (wait != 3) {
+            wait = 0;
+            do {
+                __delay_ms(500);
+            } while (lastCharPos != msgIndex && wait++ < 3);
+        }
+        checkResponse(2);
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
     
     if (isOK) {
     } else if (isERROR) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("ERROR In MQTT ", 2);
         lcdWriteStringAtCenter("Connection", 3);
 #endif
@@ -730,6 +1087,7 @@ void configureMQTT(void) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("No Response ", 2);
         lcdWriteStringAtCenter("From MQTT", 3);
 #endif
@@ -740,26 +1098,36 @@ void configureMQTT(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("SENDING ", 2);
     lcdWriteStringAtCenter("AT+CMQTTACCQ...", 3);
 #endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
     loraAttempt = 0;
     isOK = false;
-    //isERROR = false;
+    isERROR = false;
     do {
-        transmitStringToGSM("AT+CMQTTACCQ=0,\"ESP32\"\r\n");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
+        wait = 0;
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+        transmitStringToGSM("AT+CMQTTACCQ=0,\"ESP32\",0\r");
+        do {
+            __delay_ms(1000);
+        }while (!lastChar && wait++ < 3);
+        if (wait != 3) {
+            wait = 0;
+            do {
+                __delay_ms(500);
+            } while (lastCharPos != msgIndex && wait++ < 3);
+        }
+        checkResponse(0);
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
     
     if (isOK) {
     } else if (isERROR) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("ERROR In MQTT ", 2);
         lcdWriteStringAtCenter("Connection", 3);
 #endif
@@ -768,6 +1136,7 @@ void configureMQTT(void) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("No Response ", 2);
         lcdWriteStringAtCenter("From MQTT", 3);
 #endif
@@ -920,26 +1289,36 @@ void configureMQTT(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("SENDING ", 2);
     lcdWriteStringAtCenter("AT+CMQTTCONNECT=0...", 3);
 #endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
     loraAttempt = 0;
     isOK = false;
-    //isERROR = false;
+    isERROR = false;
     do {
-        transmitStringToGSM("AT+CMQTTCONNECT=0,\"tcp://mqtt.bhoomijalasandharan.com:1883\",64800,1,\"bjuUser\",\"Boomi1moob\"\r\n");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
+        wait = 0;
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+        transmitStringToGSM("AT+CMQTTCONNECT=0,\"tcp://mqtt.bhoomijalasandharan.com:1883\",2400,1,\"bjuUser\",\"Boomi1moob\"\r");
+        do {
+            __delay_ms(1000);
+        }while (!lastChar && wait++ < 3);
+        if (wait != 3) {
+            wait = 0;
+            do {
+                __delay_ms(500);
+            } while (lastCharPos != msgIndex && wait++ < 3);
+        }
+        checkResponse(2);
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
     
     if (isOK) {
     } else if (isERROR) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("ERROR In MQTT ", 2);
         lcdWriteStringAtCenter("Connection", 3);
 #endif
@@ -948,17 +1327,68 @@ void configureMQTT(void) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("No Response ", 2);
         lcdWriteStringAtCenter("From MQTT", 3);
 #endif
         __delay_ms(2000);
     }
+    /*
+    //Ping to broker
+#ifdef LCD_DISPLAY_ON_H
+    lcdClearLine(2);
+    lcdClearLine(3);
+    lcdClearLine(4);
+    lcdWriteStringAtCenter("SENDING ", 2);
+    lcdWriteStringAtCenter("AT+CMQTTPING=0", 3);
+#endif
+    loraAttempt = 0;
+    isOK = false;
+    isERROR = false;
+    do {
+        wait = 0;
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+        transmitStringToGSM("AT+CMQTTPING=0\r");
+        do {
+            __delay_ms(1000);
+        }while (!lastChar && wait++ < 3);
+        if (wait != 3) {
+            wait = 0;
+            do {
+                __delay_ms(500);
+            } while (lastCharPos != msgIndex && wait++ < 3);
+        }
+        checkResponse(2);
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
     
+    if (isOK) {
+    } else if (isERROR) {
+#ifdef LCD_DISPLAY_ON_H
+        lcdClearLine(2);
+        lcdClearLine(3);
+        lcdClearLine(4);
+        lcdWriteStringAtCenter("ERROR In MQTT ", 2);
+        lcdWriteStringAtCenter("Connection", 3);
+#endif
+        __delay_ms(2000);
+    } else {
+#ifdef LCD_DISPLAY_ON_H
+        lcdClearLine(2);
+        lcdClearLine(3);
+        lcdClearLine(4);
+        lcdWriteStringAtCenter("No Response ", 2);
+        lcdWriteStringAtCenter("From MQTT", 3);
+#endif
+        __delay_ms(2000);
+    }
+    */
     //subscribe operations:
     //Set topic
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("SENDING ", 2);
     lcdWriteStringAtCenter("AT+CMQTTSUB...", 3);
     transmitStringToGSM("AT+CMQTTSUB=0,20,1\r"); 
@@ -968,27 +1398,37 @@ void configureMQTT(void) {
 #ifdef LCD_DISPLAY_ON_H
     lcdClearLine(2);
     lcdClearLine(3);
+    lcdClearLine(4);
     lcdWriteStringAtCenter("SENDING ", 2);
     lcdWriteStringAtCenter("SUBSCRIBE", 3);
 #endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
     loraAttempt = 0;
     isOK = false;
-    //isERROR = false;
-    do { 
+    isERROR = false;
+    do {
+        wait = 0;
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
         transmitStringToGSM(deviceId);
         transmitStringToGSM("/command");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
+        do {
+            __delay_ms(1000);
+        }while (!lastChar && wait++ < 3);
+        if (wait != 3) {
+            wait = 0;
+            do {
+                __delay_ms(500);
+            } while (lastCharPos != msgIndex && wait++ < 3);
+        }
+        checkResponse(2);
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
     
     if (isOK) {
     } else if (isERROR) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("ERROR In MQTT ", 2);
         lcdWriteStringAtCenter("Connection", 3);
 #endif
@@ -997,19 +1437,25 @@ void configureMQTT(void) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
+        lcdClearLine(4);
         lcdWriteStringAtCenter("No Response ", 2);
         lcdWriteStringAtCenter("From MQTT", 3);
 #endif
         __delay_ms(2000);
     }
-    transmitStringToGSM("\r\n");
+    transmitStringToGSM("\r");
     newSMSRcvd = false;
+    clearGsmResponse();
+    wait = 0;
+    if (!isErrorActionNeeded) {
 #ifdef LCD_DISPLAY_ON_H
-    lcdClearLine(2);
-    lcdClearLine(3);
-    lcdWriteStringAtCenter("Successfully", 2);
-    lcdWriteStringAtCenter("Subscribed", 3);    
+        lcdClearLine(2);
+        lcdClearLine(3);
+        lcdClearLine(4);
+        lcdWriteStringAtCenter("Successfully", 2);
+        lcdWriteStringAtCenter("Subscribed", 3);    
 #endif
+    }
 }
 
 /*************************************************************************************************************************
@@ -1054,155 +1500,211 @@ void setGsmToLocalTime(void) {
     lcdWriteStringAtCenter("To Local Time", 3);
 #endif
     __delay_ms(2000);
+    if (!isErrorActionNeeded) {
 #ifdef LCD_DISPLAY_ON_H
-    lcdClearLine(2);
-    lcdClearLine(3);
-    lcdWriteStringAtCenter("SENDING ", 2);
-    lcdWriteStringAtCenter("AT", 3);
+        lcdClearLine(2);
+        lcdClearLine(3);
+        lcdClearLine(4);
+        lcdWriteStringAtCenter("SENDING ", 2);
+        lcdWriteStringAtCenter("AT", 3);
 #endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
-    loraAttempt = 0;
-    isOK = false;
-    isERROR = false;
-    do {
-        transmitStringToGSM("ATE0\r\n"); // Echo off command
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
+        loraAttempt = 0;
+        isOK = false;
+        isERROR = false;
     
-    if (isOK) {
-    } else if (isERROR) {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("ERROR In GPRS ", 2);
-        lcdWriteStringAtCenter("Connection", 3);
-#endif
-        __delay_ms(2000);
-    } else {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("No Response ", 2);
-        lcdWriteStringAtCenter("From GPRS", 3);
-#endif
-        __delay_ms(2000);
+        do {
+            wait = 0;
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+            transmitStringToGSM("ATE0\r"); // Echo off command
+            do {
+                __delay_ms(1000);
+            }while (!lastChar && wait++ < 3);
+            if (wait != 3) {
+                wait = 0;
+                do {
+                    __delay_ms(500);
+                } while (lastCharPos != msgIndex && wait++ < 3);
+            }
+            checkResponse(0);
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+        } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
+
+        if (isOK) {
+        } else if (isERROR) {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("ERROR In GPRS ", 2);
+            lcdWriteStringAtCenter("Connection", 3);
+    #endif
+            __delay_ms(2000);
+        } else {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("No Response ", 2);
+            lcdWriteStringAtCenter("From GPRS", 3);
+    #endif
+            __delay_ms(2000);
+        }
     }
+    if (!isErrorActionNeeded) {
 #ifdef LCD_DISPLAY_ON_H
-    lcdClearLine(2);
-    lcdClearLine(3);
-    lcdWriteStringAtCenter("SENDING ", 2);
-    lcdWriteStringAtCenter("AT+COPS=2", 3);
-#endif    
-    msgIndex = 1;
-    controllerCommandExecuted = false;
-    loraAttempt = 0;
-    isOK = false;
-    //isERROR = false;
-    do {
-        transmitStringToGSM("AT+COPS=2\r\n");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
+        lcdClearLine(2);
+        lcdClearLine(3);
+        lcdClearLine(4);
+        lcdWriteStringAtCenter("SENDING ", 2);
+        lcdWriteStringAtCenter("AT+COPS=2", 3);
+#endif
+        loraAttempt = 0;
+        isOK = false;
+        isERROR = false;
+        do {
+            wait = 0;
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+            transmitStringToGSM("AT+COPS=2\r");
+            do {
+                __delay_ms(1000);
+            }while (!lastChar && wait++ < 3);
+            if (wait != 3) {
+                wait = 0;
+                do {
+                    __delay_ms(500);
+                } while (lastCharPos != msgIndex && wait++ < 3);
+            }
+            checkResponse(1);
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+        } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
+
+        if (isOK) {
+        } else if (isERROR) {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("ERROR In GPRS ", 2);
+            lcdWriteStringAtCenter("Connection", 3);
+    #endif
+            __delay_ms(2000);
+        } else {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("No Response ", 2);
+            lcdWriteStringAtCenter("From GPRS", 3);
+    #endif
+            __delay_ms(2000);
+        }
+        __delay_ms(3000);
+        __delay_ms(3000);
+    }
     
-    if (isOK) {
-    } else if (isERROR) {
+    if (!isErrorActionNeeded) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
-        lcdWriteStringAtCenter("ERROR In GPRS ", 2);
-        lcdWriteStringAtCenter("Connection", 3);
+        lcdClearLine(4);
+        lcdWriteStringAtCenter("SENDING ", 2);
+        lcdWriteStringAtCenter("AT+CTZU=1", 3);
 #endif
-        __delay_ms(2000);
-    } else {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("No Response ", 2);
-        lcdWriteStringAtCenter("From GPRS", 3);
-#endif
-        __delay_ms(2000);
+        loraAttempt = 0;
+        isOK = false;
+        isERROR = false;
+        do {
+            wait = 0;
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+            transmitStringToGSM("AT+CTZU=1\r");
+            do {
+                __delay_ms(1000);
+            }while (!lastChar && wait++ < 3);
+            if (wait != 3) {
+                wait = 0;
+                do {
+                    __delay_ms(500);
+                } while (lastCharPos != msgIndex && wait++ < 3);
+            }
+            checkResponse(1);
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+        } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
+
+        if (isOK) {
+        } else if (isERROR) {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("ERROR In GPRS ", 2);
+            lcdWriteStringAtCenter("Connection", 3);
+    #endif
+            __delay_ms(2000);
+        } else {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("No Response ", 2);
+            lcdWriteStringAtCenter("From GPRS", 3);
+    #endif
+            __delay_ms(2000);
+        }
+        __delay_ms(3000);
     }
-    __delay_ms(3000);
-    __delay_ms(3000);
-#ifdef LCD_DISPLAY_ON_H
-    lcdClearLine(2);
-    lcdClearLine(3);
-    lcdWriteStringAtCenter("SENDING ", 2);
-    lcdWriteStringAtCenter("AT+CTZU=1", 3);
-#endif
-    msgIndex = 1;
-    controllerCommandExecuted = false;
-    loraAttempt = 0;
-    isOK = false;
-    //isERROR = false;
-    do {
-        transmitStringToGSM("AT+CTZU=1\r\n");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
     
-    if (isOK) {
-    } else if (isERROR) {
+    if (!isErrorActionNeeded) {
 #ifdef LCD_DISPLAY_ON_H
         lcdClearLine(2);
         lcdClearLine(3);
-        lcdWriteStringAtCenter("ERROR In GPRS ", 2);
-        lcdWriteStringAtCenter("Connection", 3);
+        lcdClearLine(4);
+        lcdWriteStringAtCenter("SENDING ", 2);
+        lcdWriteStringAtCenter("AT+COPS=0", 3);
 #endif
-        __delay_ms(2000);
-    } else {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("No Response ", 2);
-        lcdWriteStringAtCenter("From GPRS", 3);
-#endif
-        __delay_ms(2000);
+        loraAttempt = 0;
+        isOK = false;
+        isERROR = false;
+         do {
+            wait = 0;
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+            transmitStringToGSM("AT+COPS=0\r");
+            do {
+                __delay_ms(1000);
+            }while (!lastChar && wait++ < 3);
+            if (wait != 3) {
+                wait = 0;
+                do {
+                    __delay_ms(500);
+                } while (lastCharPos != msgIndex && wait++ < 3);
+            }
+            checkResponse(1);
+            clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+        } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
+
+        if (isOK) {
+        } else if (isERROR) {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("ERROR In GPRS ", 2);
+            lcdWriteStringAtCenter("Connection", 3);
+    #endif
+            __delay_ms(2000);
+        } else {
+    #ifdef LCD_DISPLAY_ON_H
+            lcdClearLine(2);
+            lcdClearLine(3);
+            lcdClearLine(4);
+            lcdWriteStringAtCenter("No Response ", 2);
+            lcdWriteStringAtCenter("From GPRS", 3);
+    #endif
+            __delay_ms(2000);
+        }
+        __delay_ms(3000);
+        __delay_ms(3000);
+        gsmSetToLocalTime = true;
     }
-    __delay_ms(3000);
-#ifdef LCD_DISPLAY_ON_H
-    lcdClearLine(2);
-    lcdClearLine(3);
-    lcdWriteStringAtCenter("SENDING ", 2);
-    lcdWriteStringAtCenter("AT+COPS=0", 3);
-#endif
-    msgIndex = 1;
-    controllerCommandExecuted = false; 
-    loraAttempt = 0;
-    isOK = false;
-    //isERROR = false;
-    do {
-        transmitStringToGSM("AT+COPS=0\r\n");
-        __delay_ms(1000);
-        loraAttempt++;
-    } while (loraAttempt < 3 && !isOK);
-    controllerCommandExecuted = true;
-    if (isOK) {
-    } else if (isERROR) {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("ERROR In GPRS ", 2);
-        lcdWriteStringAtCenter("Connection", 3);
-#endif
-        __delay_ms(2000);
-    } else {
-#ifdef LCD_DISPLAY_ON_H
-        lcdClearLine(2);
-        lcdClearLine(3);
-        lcdWriteStringAtCenter("No Response ", 2);
-        lcdWriteStringAtCenter("From GPRS", 3);
-#endif
-        __delay_ms(2000);
-    }
-    __delay_ms(3000);
-    __delay_ms(3000);
-    gsmSetToLocalTime = true;
 }
 
 /*************************************************************************************************************************
@@ -1251,24 +1753,105 @@ The purpose of this function is to send AT commands to GSM in order to get signa
 
 **************************************************************************************************************************/
 
-void checkSignalStrength(void) {
+_Bool checkSignalStrength(void) {
 	unsigned char digit = 0;
-    while (1) {
-        //setBCDdigit(0x0F,1); // BCD Indication for Flash
-        __delay_ms(1000);
-        digit = 0;
-        timer3Count = 30;  // 30 sec window
-        //setBCDdigit(0x0A,1);  // (c) BCD indication for checkSignalStrength Action
-        //controllerCommandExecuted = false;
-        msgIndex = CLEAR;
-        transmitStringToGSM("AT+CSQ\r\n"); // To get signal strength
-        T3CONbits.TMR3ON = ON; // Start timer thread to unlock system if GSM fails to respond within 15 sec
-        while (!controllerCommandExecuted);
-        if (T3CONbits.TMR3ON) {
-            PIR5bits.TMR3IF = SET; //Stop timer thread
+    unsigned char p = 0;
+#ifdef LCD_DISPLAY_ON_H
+    lcdClearLine(2);
+    lcdClearLine(3);
+    lcdClearLine(4);
+    lcdWriteStringAtCenter("SENDING ", 2);
+    lcdWriteStringAtCenter("AT", 3);
+#endif
+    loraAttempt = 0;
+    isOK = false;
+    isERROR = false;
+    do {
+        wait = 0;
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+        transmitStringToGSM("ATE0\r"); // Echo off command
+        do {
+            __delay_ms(1000);
+        }while (!lastChar && wait++ < 3);
+        if (wait != 3) {
+            wait = 0;
+            do {
+                __delay_ms(1000);
+            } while (lastCharPos != msgIndex && wait++ < 3);
         }
-        for(msgIndex = 6;  gsmResponse[msgIndex] != ',' ; msgIndex++)  
-        {
+        checkResponse(0);
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
+
+    if (isOK) {
+    } else if (isERROR) {
+#ifdef LCD_DISPLAY_ON_H
+        lcdClearLine(2);
+        lcdClearLine(3);
+        lcdClearLine(4);
+        lcdWriteStringAtCenter("ERROR In GPRS ", 2);
+        lcdWriteStringAtCenter("Connection", 3);
+#endif
+        __delay_ms(2000);
+    } else {
+#ifdef LCD_DISPLAY_ON_H
+        lcdClearLine(2);
+        lcdClearLine(3);
+        lcdClearLine(4);
+        lcdWriteStringAtCenter("No Response ", 2);
+        lcdWriteStringAtCenter("From GPRS", 3);
+#endif
+        __delay_ms(2000);
+    }
+#ifdef LCD_DISPLAY_ON_H
+    lcdClearLine(2);
+    lcdClearLine(3);
+    lcdClearLine(4);
+    lcdWriteStringAtCenter("Checking Signal", 2);
+    lcdWriteStringAtCenter("Strength", 3);
+#endif
+    loraAttempt = 0;
+    isOK = false;
+    isERROR = false;
+    do {
+        wait = 0;
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
+        transmitStringToGSM("AT+CSQ\r"); // To get signal strength
+        do {
+            __delay_ms(1000);
+        }while (!lastChar && wait++ < 3);
+        if (wait != 3) {
+            wait = 0;
+            do {
+                __delay_ms(1000);
+            } while (lastCharPos != msgIndex && wait++ < 3);
+        }
+        checkResponse(1);  
+    } while (loraAttempt++ < 2 && !isErrorActionNeeded && !isOK);
+    if (isOK) {
+        p = (unsigned char)((strstr(gsmResponse, csq)) - gsmResponse);
+    } else if (isERROR) {
+#ifdef LCD_DISPLAY_ON_H
+        lcdClearLine(2);
+        lcdClearLine(3);
+        lcdClearLine(4);
+        lcdWriteStringAtCenter("ERROR In GSM ", 2);
+        lcdWriteStringAtCenter("Connection", 3);
+#endif
+        __delay_ms(2000);
+    } else {
+#ifdef LCD_DISPLAY_ON_H
+        lcdClearLine(2);
+        lcdClearLine(3);
+        lcdClearLine(4);
+        lcdWriteStringAtCenter("No Response ", 2);
+        lcdWriteStringAtCenter("From GSM", 3);
+#endif
+        isErrorActionNeeded = true;
+        __delay_ms(2000);
+    }
+    if (isOK) {
+        for(msgIndex = p+5;  gsmResponse[msgIndex] != ',' ; msgIndex++) {
             if(isNumber(gsmResponse[msgIndex])) //is number
             {	
                 if(gsmResponse[msgIndex+1] == ',')
@@ -1284,116 +1867,111 @@ void checkSignalStrength(void) {
                     digit = digit+gsmResponse[msgIndex];
                     }       
             }
-        }  
+        }
+        clearGsmResponse(); // msgIndex = CLEAR; lastChar = false;lastCharPos = 1;
         __delay_ms(1000);
         sprintf(temporaryBytesArray,"%d",digit);
-        if(digit <= 5) //Poor Signal
-        {   
-#ifdef LCD_DISPLAY_ON_H
+        if(digit <= 5) {   //Poor Signal
+    #ifdef LCD_DISPLAY_ON_H
             lcdClear();
             lcdWriteStringAtCenter("Poor",2);
             lcdWriteStringAtCenter("GSM Signal",3);
             lcdWriteStringAtCenter((const char *)temporaryBytesArray,4);
-#endif
+    #endif
             __delay_ms(3000);
             __delay_ms(3000);
             __delay_ms(3000);
-        }
-        else if(digit >= 6 && digit <= 9) //Very Low Signal
-        { 
-#ifdef LCD_DISPLAY_ON_H
+            return 0;
+        } else if(digit >= 6 && digit <= 9) { //Very Low Signal
+    #ifdef LCD_DISPLAY_ON_H
             lcdClear();
             lcdWriteStringAtCenter("Very Low",2);
             lcdWriteStringAtCenter("GSM Signal",3);
             lcdWriteStringAtCenter((const char *)temporaryBytesArray,4);
-#endif
+    #endif
             __delay_ms(3000);
             __delay_ms(3000);
             __delay_ms(3000);
-        }
-        else if(digit >= 10&&digit <= 13) //Low Signal
-        { 
-#ifdef LCD_DISPLAY_ON_H
+            return 0;
+        } else if(digit >= 10&&digit <= 13) { //Low Signal
+    #ifdef LCD_DISPLAY_ON_H
             lcdClear();
             lcdWriteStringAtCenter("LOW",2);
             lcdWriteStringAtCenter("GSM Signal",3);
             lcdWriteStringAtCenter((const char *)temporaryBytesArray,4);
-#endif
+    #endif
             __delay_ms(3000);
             __delay_ms(3000);
             __delay_ms(3000);
-        }
-        else if(digit >= 14&&digit <= 17) //Moderate Signal
-        { 
-#ifdef LCD_DISPLAY_ON_H
+            return 0;
+        } else if(digit >= 14&&digit <= 17) { //Moderate Signal
+    #ifdef LCD_DISPLAY_ON_H
             lcdClear();
             lcdWriteStringAtCenter("Moderate",2);
             lcdWriteStringAtCenter("GSM Signal",3);
             lcdWriteStringAtCenter((const char *)temporaryBytesArray,4);
-#endif
+    #endif
             __delay_ms(3000);
             __delay_ms(3000);
             __delay_ms(3000);
-        }
-        else if(digit >= 18 && digit <= 21) //Good Signal
-        { 
-#ifdef LCD_DISPLAY_ON_H
+            return 1;
+        } else if(digit >= 18 && digit <= 21) { //Good Signal
+    #ifdef LCD_DISPLAY_ON_H
             lcdClear();
             lcdWriteStringAtCenter("Good",2);
             lcdWriteStringAtCenter("GSM Signal",3);
             lcdWriteStringAtCenter((const char *)temporaryBytesArray,4);
-#endif
+    #endif
             __delay_ms(3000);
             __delay_ms(3000);
             __delay_ms(3000);
-        }
-        else if(digit >= 22&& digit <= 25) //very good Signal
-        { 
-#ifdef LCD_DISPLAY_ON_H
+            return 1;
+        } else if(digit >= 22&& digit <= 25) { //very good Signal
+    #ifdef LCD_DISPLAY_ON_H
             lcdClear();
             lcdWriteStringAtCenter("Very Good",2);
             lcdWriteStringAtCenter("GSM Signal",3);
             lcdWriteStringAtCenter((const char *)temporaryBytesArray,4);
-#endif
+    #endif
             __delay_ms(3000);
             __delay_ms(3000);
             __delay_ms(3000);
-        }
-        else if(digit >= 26 && digit <= 31) //Excellent Signal
-        { 
-#ifdef LCD_DISPLAY_ON_H
+            return 1;
+        } else if(digit >= 26 && digit <= 31) { //Excellent Signal
+    #ifdef LCD_DISPLAY_ON_H
             lcdClear();
             lcdWriteStringAtCenter("Excellent",2);
             lcdWriteStringAtCenter("GSM Signal",3);
             lcdWriteStringAtCenter((const char *)temporaryBytesArray,4);
-#endif
+    #endif
             __delay_ms(3000);
             __delay_ms(3000);
             __delay_ms(3000);
-        }
-        else if(digit == 99) // not known or not detectable
-        { 
-#ifdef LCD_DISPLAY_ON_H
+            return 1;
+        } else if(digit == 99) { // not known or not detectable
+    #ifdef LCD_DISPLAY_ON_H
             lcdClear();
             lcdWriteStringAtCenter("NO",2);
             lcdWriteStringAtCenter("GSM Signal",3);
             lcdWriteStringAtCenter((const char *)temporaryBytesArray,4);
-#endif
+    #endif
             __delay_ms(3000);
             __delay_ms(3000);
             __delay_ms(3000);
+            return 0;
         }
-        else {
+        return 0;
+    } else {
 #ifdef LCD_DISPLAY_ON_H
-            lcdClear();
-            lcdWriteStringAtCenter("Error In",2);
-            lcdWriteStringAtCenter("GSM Signal",3);
-            lcdWriteStringAtCenter((const char *)temporaryBytesArray,4);
+        lcdClear();
+        lcdWriteStringAtCenter("Error In",2);
+        lcdWriteStringAtCenter("GSM Signal",3);
+        lcdWriteStringAtCenter((const char *)temporaryBytesArray,4);
 #endif
-            __delay_ms(3000);
-            __delay_ms(3000);
-            __delay_ms(3000);
-        }
-    }															 
+        __delay_ms(3000);
+        __delay_ms(3000);
+        __delay_ms(3000);
+        return 0;
+    }														 
 }
 //*****************Serial communication functions_End****************//
